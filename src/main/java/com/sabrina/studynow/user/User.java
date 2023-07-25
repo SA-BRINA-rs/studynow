@@ -29,7 +29,6 @@ public class User extends BaseEntity implements UserDetails {
     protected @Column(nullable=false, length=45) String lastName;
     protected @Column(nullable=false) String email;
     protected @Column(nullable=false, length = 256) String password;
-    protected @Column byte[] profilePicture;
 
     @Builder.Default
     protected @Enumerated(EnumType.STRING) UserRole userRole = UserRole.STUDENT;

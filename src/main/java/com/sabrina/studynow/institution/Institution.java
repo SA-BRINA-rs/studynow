@@ -28,6 +28,7 @@ public class Institution extends BaseEntity {
     private @Column(nullable = false, length = 100) String name;
     private @Column(nullable = false, length = 20) String phone;
     private @Column(nullable = false, length = 250) String description;
+    protected @Column byte[] profilePicture;
 
     @Convert(converter = StringListConverter.class)
     private List<String> tags;

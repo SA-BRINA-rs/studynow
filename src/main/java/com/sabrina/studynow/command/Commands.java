@@ -186,6 +186,21 @@ public class Commands {
                     .build();
             rateRepository.save(rate2);
 
+            Course courseTest = Course.builder()
+                    .id(3L)
+                    .institution(institution)
+//                    .name("BSc (Honours) in Computing")
+                    .price(-1.00)
+//                    .startDate(LocalDate.now())
+//                    .endDate(LocalDate.now().plusYears(4))
+                    .mode(mode)
+//                    .subject("Computing")
+//                    .description("")
+                    .tags(Arrays.asList("IT", "Technology"))
+                    .build();
+
+            Double maxPrice = -1d;
+            System.err.println(courseRepository.searchByKeyword(courseTest, maxPrice));
         };
     }
 

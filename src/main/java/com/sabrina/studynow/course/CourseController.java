@@ -4,6 +4,7 @@ import com.sabrina.studynow.token.APIToken;
 import com.sabrina.studynow.token.APITokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<String> checkAPI() {
-        return ResponseEntity.ok("Heart rate API is working");
+        return ResponseEntity.ok("Course API is working");
     }
 
     @PostMapping
@@ -49,6 +50,14 @@ public class CourseController {
     @ExceptionHandler
     public ResponseEntity<String> handleException(MissingRequestHeaderException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> integrityViolationException(DataIntegrityViolationException e) {
+        String message = e.getMessage();
+        if(message.contains("Duplicate entry"))
+            return ResponseEntity.badRequest().body("Duplicate entry exception: Course already exists");
+        return ResponseEntity.badRequest().body(message);
     }
 
 }

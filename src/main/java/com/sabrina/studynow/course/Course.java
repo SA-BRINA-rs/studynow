@@ -40,8 +40,8 @@ public class Course extends BaseEntity {
     private @Column(nullable=false) LocalDate endDate;
     private @Column(nullable=false, length = 250) String subject;
     private @Column(nullable=false, length = 500) String description;
+    protected @Column byte[] profilePicture;
 
-//    Search why description is not excepted by API request
     @Convert(converter = StringListConverter.class)
     private List<String> tags;
 }

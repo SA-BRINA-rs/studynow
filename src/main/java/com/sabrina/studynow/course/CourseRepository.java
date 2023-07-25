@@ -15,9 +15,13 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Course findCourseWithAverageRateById(Long courseId);
 
     @Query("SELECT c FROM Course c WHERE " +
-            "LOWER(c.name) LIKE LOWER(concat('%', :keyword, '%')) OR " +
-            "LOWER(c.description) LIKE LOWER(concat('%', :keyword, '%')) OR " +
-            "LOWER(c.tags) IN :keyword")
-    List<Course> searchByKeyword(String keyword);
+            "(:#{#course.name} IS NOT NULL OR LOWER(c.name) LIKE LOWER(concat('%', :#{#course.name}, '%'))) OR " +
+            "(:#{#course.subject} IS NOT NULL OR LOWER(c.subject) LIKE LOWER(concat('%', :#{#course.subject}, '%'))) OR " +
+            "(:#{#course.description} IS NOT NULL OR LOWER(c.description) LIKE LOWER(concat('%', :#{#course.description}, '%'))) OR " +
+//            "(LOWER(c.tags) LIKE concat('%', :#{#course.tags}, '%')) OR " +
+            "(c.price BETWEEN :#{#price} AND :maxPrice) OR " +
+            "(:#{#startDate} IS NOT NULL OR c.startDate >= :#{#course.startDate}) AND" +
+            "(:#{#endDate} IS NOT NULL OR c.endDate <= :#{#course.endDate})")
+    List<Course> searchByKeyword(Course course, Double maxPrice);
 
 }
