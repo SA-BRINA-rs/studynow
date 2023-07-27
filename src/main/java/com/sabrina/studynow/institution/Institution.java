@@ -10,6 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "institutions")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "institution_type", discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder @Data @EqualsAndHashCode(callSuper = false)
@@ -19,17 +21,27 @@ public class Institution extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
-    private User user;
+    protected User user;
 
-    private @Column(nullable = false, length = 100) String name;
-    private @Column(nullable = false, length = 20) String phone;
-    private @Column(nullable = false, length = 250) String description;
-    protected @Column byte[] profilePicture;
+    @Column(name = "institution_type", insertable = false, updatable = false)
+    private String institutionType;
+
+    @Transient
+    protected Integer averageRate;
+
+    protected @Column(nullable = false, length = 100) String name;
+    protected @Column(nullable = false, length = 20) String phone;
+    protected @Column(nullable = false, length = 250) String description;
+    protected @Column byte[] thumbnail;
 
     @Convert(converter = StringListConverter.class)
-    private List<String> tags;
+    protected List<String> tags;
+
+    public boolean isThumbnailPresent() {
+        return this.thumbnail != null && this.thumbnail.length > 0;
+    }
 }

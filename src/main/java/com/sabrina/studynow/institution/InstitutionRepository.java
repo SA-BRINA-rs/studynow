@@ -1,5 +1,6 @@
 package com.sabrina.studynow.institution;
 
+import com.sabrina.studynow.institution.card.InstitutionCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,7 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
             "LOWER(i.description) LIKE LOWER(concat('%', :keyword, '%')) OR " +
             "LOWER(i.tags) LIKE LOWER(concat('%', :keyword, '%'))")
     List<Institution> searchByKeyword(String keyword);
+
+    @Query("SELECT c FROM InstitutionCard c")
+    List<InstitutionCard> findAllCards();
 }

@@ -12,6 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "courses")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "course_type", discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder @Data @EqualsAndHashCode(callSuper = false)
@@ -21,27 +23,30 @@ public class Course extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @ManyToOne
     @JoinColumn(name = "institution_id", referencedColumnName = "id", nullable = false)
-    private Institution institution;
+    protected Institution institution;
 
     @ManyToOne
     @JoinColumn(name = "mode_id", referencedColumnName = "id", nullable = false)
-    private Mode mode;
+    protected Mode mode;
+
+    @Column(name = "course_type", insertable = false, updatable = false)
+    private String institutionType;
 
     @Transient
-    private Integer averageRate;
+    protected Integer averageRate;
 
-    private @Column(nullable=false, length = 100) String name;
-    private @Column(nullable=false) double price;
-    private @Column(nullable=false) LocalDate startDate;
-    private @Column(nullable=false) LocalDate endDate;
-    private @Column(nullable=false, length = 250) String subject;
-    private @Column(nullable=false, length = 500) String description;
-    protected @Column byte[] profilePicture;
+    protected @Column(nullable=false, length = 100) String name;
+    protected @Column(nullable=false) double price;
+    protected @Column(nullable=false) LocalDate startDate;
+    protected @Column(nullable=false) LocalDate endDate;
+    protected @Column(nullable=false, length = 250) String subject;
+    protected @Column(nullable=false, length = 500) String description;
+    protected @Column byte[] thumbnail;
 
     @Convert(converter = StringListConverter.class)
-    private List<String> tags;
+    protected List<String> tags;
 }

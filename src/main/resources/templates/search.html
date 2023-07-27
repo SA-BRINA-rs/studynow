@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title th:text="${#strings.capitalize(pageName)}">StudyNow</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
+    <link rel="stylesheet" href="assets/css/Star-Rating.min.css">
+    <link rel="stylesheet" href="assets/css/Static-Star-Rating.min.css">
+</head>
+
+<body>
+    <nav th:insert="~{fragments/header :: nav}"></nav>
+    <section th:insert="~{fragments/section_alert :: section}"></section>
+    <section class="pt-5 mt-5">
+        <div class="container pt-4 pt-xl-5">
+            <div class="row gy-4 gy-md-0">
+                <div class="col">
+                    <h1 class="display-4 fw-bold text-center mb-5">Discover Your Dream&nbsp;
+                        <span class="underline" th:text="${#strings.capitalize(pageName)}">School!</span></h1>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container py-5">
+            <div class="row mx-auto">
+                <div class="col">
+                    <form class="d-flex justify-content-center flex-wrap" method="post">
+                        <div class="row mx-auto w-100">
+                            <div class="col col-12 col-md-10"><input class="form-control" type="search" name="search" placeholder="Institution StudyNow..."></div>
+                            <div class="col col-12 col-md-2"><button class="btn btn-primary w-100 mt-2 mt-md-0" type="submit">Search</button></div>
+                        </div>
+                        <div class="row w-100">
+                            <div class="col pt-3 px-2">
+                                <div class="accordion text-muted" role="tablist" id="accordion-2">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" role="tab"><button class="accordion-button collapsed shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-2 .item-1" aria-expanded="false" aria-controls="accordion-2 .item-1">Filter by tag</button></h2>
+                                        <div class="accordion-collapse collapse item-1" role="tabpanel" data-bs-parent="#accordion-2">
+                                            <div class="accordion-body">
+                                                <div class="form-check text-bg-light form-check-pill"><input class="form-check-input tag-input" type="checkbox" id="formCheck-1"><label class="form-check-label text-dark-emphasis border rounded-pill tag-label" for="formCheck-1">Dublin</label></div>
+                                                <div class="form-check text-bg-light form-check-pill"><input class="form-check-input tag-input" type="checkbox" id="formCheck-2"><label class="form-check-label text-dark-emphasis border rounded-pill tag-label" for="formCheck-2">Cork</label></div>
+                                                <div class="form-check text-bg-light form-check-pill"><input class="form-check-input tag-input" type="checkbox" id="formCheck-3"><label class="form-check-label text-dark-emphasis border rounded-pill tag-label" for="formCheck-3">Limerick</label></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" role="tab"><button class="accordion-button collapsed shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-2 .item-2" aria-expanded="false" aria-controls="accordion-2 .item-2">Filter by price</button></h2>
+                                        <div class="accordion-collapse collapse item-2" role="tabpanel" data-bs-parent="#accordion-2">
+                                            <div class="accordion-body">
+                                                <div class="row">
+                                                    <div class="col d-flex"><input class="border-0 form-control mx-auto range-price-value p-0" type="number" id="price_value" style="max-width: 80px;" value="0"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col col-sm-2 col-lg-1"><label class="col-form-label text-truncate" id="min_price">2500&nbsp;</label></div>
+                                                    <div class="col d-flex"><input class="form-range border-0 form-control my-auto" type="range" id="price_range" style="height: 10px;" min="2500" max="10000" name="price_range" value="5000"></div>
+                                                    <div class="col col-sm-2 col-lg-1"><label class="col-form-label text-truncate" id="max_price">10000</label></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" role="tab"><button class="accordion-button collapsed shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-2 .item-3" aria-expanded="false" aria-controls="accordion-2 .item-3">Filter by date range</button></h2>
+                                        <div class="accordion-collapse collapse item-3" role="tabpanel" data-bs-parent="#accordion-2">
+                                            <div class="accordion-body">
+                                                <div class="row">
+                                                    <div class="col mx-4"><label class="form-label">Start</label><input class="form-control" type="date"></div>
+                                                    <div class="col mx-4 mx-md-5"><label class="form-label">End</label><input class="form-control" type="date"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Traverse a list of elements -->
+            <div th:each="card: ${cards}">
+                <div th:replace="~{fragments/horizontal_card.html
+                        :: cardFields(id=${card.getCardID()}, name=${card.getCardName()},
+                        description=${card.getCardDescription()}, textLink=${card.getCardTextLink()},
+                        rate=${card.getCardRate()}, image=${card.getCardImage()})}">
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">5</a></li>
+                            <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer th:insert="~{fragments/footer :: footer}"></footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+    <script src="assets/js/Star-Rating-star_rating.min.js"></script>
+    <script src="assets/js/dark_theme.js"></script>
+</body>
+</html>

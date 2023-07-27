@@ -1,6 +1,5 @@
 package com.sabrina.studynow.course;
 
-import com.sabrina.studynow.token.APIToken;
 import com.sabrina.studynow.token.APITokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

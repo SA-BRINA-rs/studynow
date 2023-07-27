@@ -1,5 +1,6 @@
 package com.sabrina.studynow.course;
 
+import com.sabrina.studynow.course.card.CourseCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,4 +25,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "(:#{#endDate} IS NOT NULL OR c.endDate <= :#{#course.endDate})")
     List<Course> searchByKeyword(Course course, Double maxPrice);
 
+    @Query("SELECT c FROM CourseCard c")
+    List<CourseCard> findAllCards();
 }

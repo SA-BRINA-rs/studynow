@@ -37,4 +37,8 @@ public class APITokenService {
     public List<APIToken> getAll() {
     	return APITokenRepository.findAll();
     }
+
+    public APIToken getAPIToken(Long id) {
+        return APITokenRepository.findByUserId(id).orElse(new APITokenNullObject());
+    }
 }

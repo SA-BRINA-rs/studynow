@@ -1,6 +1,7 @@
 package com.sabrina.studynow.token;
 
 import com.sabrina.studynow.base.BaseEntity;
+import com.sabrina.studynow.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -20,11 +21,15 @@ public class APIToken extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", columnDefinition = "VARCHAR(40)")
-    private String id;
+    protected String id;
 
-    private @Column(nullable=false) LocalDate expirationDate;
-    private @Column(nullable=false) boolean active;
-    private @Column(nullable=false) boolean neverExpires;
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
+    protected User user;
+
+    protected @Column(nullable=false) LocalDate expirationDate;
+    protected @Column(nullable=false) boolean active;
+    protected @Column(nullable=false) boolean neverExpires;
 
     public boolean isExpired() {
         return !neverExpires && expirationDate.isBefore(LocalDate.now());

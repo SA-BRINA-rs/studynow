@@ -12,7 +12,9 @@ import com.sabrina.studynow.course.rate.Rate;
 import com.sabrina.studynow.course.rate.RateRepository;
 import com.sabrina.studynow.institution.Institution;
 import com.sabrina.studynow.institution.InstitutionRepository;
+import com.sabrina.studynow.institution.card.InstitutionCard;
 import com.sabrina.studynow.token.APIToken;
+import com.sabrina.studynow.token.APITokenNullObject;
 import com.sabrina.studynow.token.APITokenRepository;
 import com.sabrina.studynow.user.User;
 import com.sabrina.studynow.user.UserRepository;
@@ -98,7 +100,12 @@ public class Commands {
                     .build();
             addressRepository.save(address);
 
+            APITokenNullObject apiTokenNullObject = new APITokenNullObject();
+            apiTokenNullObject.getId();
+            apiTokenNullObject.isActive();
+
             APIToken apiToken = APIToken.builder()
+                    .user(nationalCollegeIreland)
                     .expirationDate(LocalDate.now())
                     .active(true)
                     .neverExpires(true)
