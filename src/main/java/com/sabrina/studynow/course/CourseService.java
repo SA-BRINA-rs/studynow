@@ -3,7 +3,9 @@ package com.sabrina.studynow.course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -19,7 +21,7 @@ public class CourseService {
     	return courseRepository.findById(id).orElse(null);
     }
 
-    public void add(Course course) {
+    public void save(Course course) {
         courseRepository.save(course);
     }
 
@@ -32,7 +34,8 @@ public class CourseService {
     }
 
     public List<Course> getAll() {
-    	return courseRepository.findAll();
+    	return Optional.of(courseRepository.findAll())
+                .orElse(Collections.emptyList());
     }
 
     public Course getCourseWithAverageRateById(Long courseId) {

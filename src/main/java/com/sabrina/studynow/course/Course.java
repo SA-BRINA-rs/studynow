@@ -7,6 +7,8 @@ import com.sabrina.studynow.institution.Institution;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,8 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder @Data @EqualsAndHashCode(callSuper = false)
-public class Course extends BaseEntity {
+public class Course extends BaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id

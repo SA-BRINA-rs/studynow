@@ -3,7 +3,9 @@ package com.sabrina.studynow.course.mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ModeService {
@@ -19,7 +21,7 @@ public class ModeService {
     	return modeRepository.findById(id).orElse(null);
     }
 
-    public void add(Mode mode) {
+    public void save(Mode mode) {
         modeRepository.save(mode);
     }
 
@@ -32,7 +34,8 @@ public class ModeService {
     }
 
     public List<Mode> getAll() {
-    	return modeRepository.findAll();
+    	return Optional.of(modeRepository.findAll())
+                .orElse(Collections.emptyList());
     }
 
 }

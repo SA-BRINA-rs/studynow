@@ -44,4 +44,8 @@ public class Institution extends BaseEntity {
     public boolean isThumbnailPresent() {
         return this.thumbnail != null && this.thumbnail.length > 0;
     }
+
+    public boolean isEnabled() {
+        return true;
+    }
 }

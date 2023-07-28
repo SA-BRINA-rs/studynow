@@ -6,13 +6,17 @@ import com.sabrina.studynow.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Entity
 @Table(name = "favorites")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder @Data @EqualsAndHashCode(callSuper = false)
-public class Favorite extends BaseEntity {
+public class Favorite extends BaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id

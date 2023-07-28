@@ -100,10 +100,6 @@ public class Commands {
                     .build();
             addressRepository.save(address);
 
-            APITokenNullObject apiTokenNullObject = new APITokenNullObject();
-            apiTokenNullObject.getId();
-            apiTokenNullObject.isActive();
-
             APIToken apiToken = APIToken.builder()
                     .user(nationalCollegeIreland)
                     .expirationDate(LocalDate.now())
@@ -125,6 +121,7 @@ public class Commands {
             institutionRepository.save(institution);
 
             Mode mode = Mode.builder()
+                    .institution(institution)
                     .name("Online")
                     .description("Online courses")
                     .build();

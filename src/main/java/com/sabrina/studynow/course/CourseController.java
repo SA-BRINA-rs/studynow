@@ -41,7 +41,7 @@ public class CourseController {
         if (apiTokenService.getById(token).isExpired())
             return ResponseEntity.badRequest().body("Token is expired");
 
-        courseService.add(course);
+        courseService.save(course);
 
         return ResponseEntity.ok("Course added");
     }

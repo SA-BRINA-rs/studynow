@@ -12,6 +12,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface InstitutionRepository extends JpaRepository<Institution, Long> {
 
+    @Query("SELECT i FROM Institution i WHERE i.user.id = ?1")
+    Institution findByUserId(Long userId);
+
     @Query("SELECT i FROM Institution i WHERE " +
             "LOWER(i.name) LIKE LOWER(concat('%', :keyword, '%')) OR " +
             "LOWER(i.description) LIKE LOWER(concat('%', :keyword, '%')) OR " +

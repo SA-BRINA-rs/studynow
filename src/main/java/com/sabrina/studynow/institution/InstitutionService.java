@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InstitutionService {
@@ -20,7 +21,12 @@ public class InstitutionService {
     	return institutionRepository.findById(id).orElse(null);
     }
 
-    public void add(Institution institution) {
+    public Institution getByUserId(Long userId) {
+    	return Optional.ofNullable(institutionRepository.findByUserId(userId))
+                .orElse(new InstitutionNullObject());
+    }
+
+    public void save(Institution institution) {
         institutionRepository.save(institution);
     }
 
