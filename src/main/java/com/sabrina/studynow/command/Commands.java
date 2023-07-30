@@ -131,9 +131,9 @@ public class Commands {
                     .id(1L)
                     .institution(institution)
                     .name("BSc (Honours) in Computing")
-                    .price(10000.00)
-                    .startDate(LocalDate.now())
-                    .endDate(LocalDate.now().plusYears(4))
+                    .price(15000.00)
+                    .startDate(LocalDate.now().plusYears(2))
+                    .endDate(LocalDate.now().plusYears(6))
                     .subject("Computing")
                     .description("The BSc (Honours) in Computing is a four-year, " +
                             "part-time programme of study that provides a comprehensive and " +
@@ -205,6 +205,9 @@ public class Commands {
 
             Double maxPrice = -1d;
             System.err.println(courseRepository.searchByKeyword(courseTest, maxPrice));
+            courseTest.setName("Cloud");
+            System.err.println(courseRepository.searchByCourseCardsKeyword(courseTest, maxPrice));
+
         };
     }
 

@@ -8,6 +8,7 @@ import com.sabrina.studynow.course.rate.RateNullObject;
 import com.sabrina.studynow.course.rate.RateService;
 import com.sabrina.studynow.user.User;
 import com.sabrina.studynow.user.UserNullObject;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,8 @@ public class CourseController {
     String getCourse(
             Model model,
             @PathVariable("id") Long id,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal User user,
+            HttpSession session) {
 
         SecurityContextHolder.getContext().getAuthentication();
         User userTemp = Optional.ofNullable(user)
@@ -59,6 +61,12 @@ public class CourseController {
         Favorite favorite = Optional.ofNullable(favoriteService.getFavoriteByUserId(userTemp.getId(), id))
                 .orElse(new FavoriteNullObject());
 
+        String previousPage = Optional.ofNullable(session.getAttribute("previousPage"))
+                .orElse("view")
+                .toString();
+
+        session.removeAttribute("previousPage");
+        model.addAttribute("previousPage", previousPage);
         model.addAttribute("course", course);
         model.addAttribute("rates", rates);
         model.addAttribute("userRate", userRate);
@@ -72,13 +80,13 @@ public class CourseController {
     @PostMapping("/favorites")
     String addFavorite(
             Model model,
-            @RequestBody Long id,
+            @RequestBody String id,
             @AuthenticationPrincipal User user) {
 
         SecurityContextHolder.getContext().getAuthentication();
-
-        Course course = courseService.getById(id);
-        Favorite favorite = Optional.ofNullable(favoriteService.getFavoriteByUserId(user.getId(), id))
+        Long courseId = Long.parseLong(id);
+        Course course = courseService.getById(courseId);
+        Favorite favorite = Optional.ofNullable(favoriteService.getFavoriteByUserId(user.getId(), courseId))
                 .orElse(Favorite.builder()
                         .user(user)
                         .course(course)

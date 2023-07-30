@@ -54,4 +54,19 @@ public class CourseService {
         return courseRepository.findAllCardsByInstitutionId(l);
     }
 
+    public List<CourseCard> getAllCardsByKeyword(Course course, Double priceRange) {
+        return courseRepository.searchByCourseCardsKeyword(course, priceRange);
+    }
+
+    public double getMaxPriceByAmongAllInstitutions() {
+        return courseRepository.getMaxPriceByAmongAllInstitutions();
+    }
+
+    public double getMinPriceAmongAllInstitutionId() {
+        return courseRepository.getMinPriceAmongAllInstitutionId();
+    }
+
+    public List<CourseCard> findAllCourseCardsByUserId(Long userId) {
+        return courseRepository.findAllCourseCardsByUserId(userId);
+    }
 }

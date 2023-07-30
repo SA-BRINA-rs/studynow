@@ -1,5 +1,7 @@
 package com.sabrina.studynow.course.favorite;
 
+import com.sabrina.studynow.course.card.CourseCard;
+import com.sabrina.studynow.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,4 +47,5 @@ public class FavoriteService {
     public Favorite getFavoriteByUserId(Long userId, Long courseId) {
         return favoriteRepository.getFavoriteByUserId(userId, courseId);
     }
+
 }
