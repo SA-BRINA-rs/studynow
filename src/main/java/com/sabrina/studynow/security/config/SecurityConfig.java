@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/logout*"))
                 .authenticationProvider(daoAuthenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-                        .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
+//                        .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
                         .requestMatchers("/", "index", "/api/**", "/signup/**", "/login", "/logout*",
                                 "/view/{id}", "/view/course/", "view/institution/", "/search/**",
                                 "/search/course/**", "/resources/**", "/assets/**").permitAll()
@@ -48,9 +48,9 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true"))
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/").permitAll());
-//                .exceptionHandling((exception) -> exception
-//                        .accessDeniedPage("/login"));
+                        .logoutSuccessUrl("/").permitAll())
+                .exceptionHandling((exception) -> exception
+                        .accessDeniedPage("/login"));
         return http.build();
     }
 

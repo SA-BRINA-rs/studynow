@@ -204,9 +204,9 @@ public class Commands {
                     .build();
 
             Double maxPrice = -1d;
-            System.err.println(courseRepository.searchByKeyword(courseTest, maxPrice));
+            System.out.println(courseRepository.searchByKeyword(courseTest, maxPrice));
             courseTest.setName("Cloud");
-            System.err.println(courseRepository.searchByCourseCardsKeyword(courseTest, maxPrice));
+            System.out.println(courseRepository.searchByCourseCardsKeyword(courseTest, maxPrice));
 
         };
     }
