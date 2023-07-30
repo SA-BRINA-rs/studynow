@@ -6,6 +6,7 @@ import com.sabrina.studynow.course.mode.Mode;
 import com.sabrina.studynow.institution.Institution;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -39,7 +40,6 @@ public class Course extends BaseEntity implements Serializable {
     @Column(name = "course_type", insertable = false, updatable = false)
     private String institutionType;
 
-    @Transient
     protected Integer averageRate;
 
     protected @Column(nullable=false, length = 100) String name;

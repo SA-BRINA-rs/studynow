@@ -35,8 +35,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
                         .requestMatchers("/", "index", "/api/**", "/signup/**", "/login", "/logout*",
-                                "/search", "/resources/**", "/assets/**").permitAll()
-                        .requestMatchers("/profile", "/favorite", "/institution/**")
+                                "/view/{id}", "/view/course/", "view/institution/", "/search/**", "/resources/**", "/assets/**").permitAll()
+                        .requestMatchers("/profile", "/favorite", "/institution/**",
+                                "/view/rate/**", "/view/favorite/**")
                         .fullyAuthenticated()
                         .anyRequest().authenticated()
                 )
@@ -46,7 +47,9 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true"))
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/").permitAll());
+                        .logoutSuccessUrl("/").permitAll())
+                .exceptionHandling((exception) -> exception
+                        .accessDeniedPage("/login"));
         return http.build();
     }
 

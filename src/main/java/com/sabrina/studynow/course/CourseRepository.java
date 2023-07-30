@@ -2,6 +2,7 @@ package com.sabrina.studynow.course;
 
 import com.sabrina.studynow.course.card.CourseCard;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
 public interface CourseRepository extends JpaRepository<Course, Long> {
-
-    @Query("SELECT c, AVG(r.rate) FROM Course c LEFT JOIN Rate r ON c.id = r.course.id WHERE c.id = :courseId")
-    Course findCourseWithAverageRateById(Long courseId);
 
     @Query("SELECT c FROM Course c WHERE " +
             "(:#{#course.name} IS NOT NULL OR LOWER(c.name) LIKE LOWER(concat('%', :#{#course.name}, '%'))) OR " +
@@ -27,4 +24,15 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("SELECT c FROM CourseCard c")
     List<CourseCard> findAllCards();
+
+    @Modifying
+    @Query("DELETE FROM Course c WHERE c.mode.id = ?1")
+    void deleteAllByModeId(Long modeId);
+
+    @Query("SELECT c FROM Course c WHERE c.mode.id = ?1")
+    List<Course> findAllByModeId(Long modeId);
+
+    @Query("SELECT c FROM CourseCard c WHERE c.institution.id = ?1")
+    List<CourseCard> findAllCardsByInstitutionId(long l);
+
 }

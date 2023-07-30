@@ -1,17 +1,23 @@
-<div th:fragment="cardFields (id, name, description, textLink, rate, image)">
+<div th:fragment="cardFields (id, name, description, textLink, rate, image, url)">
   <hr>
   <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
     <!-- Add image to the card -->
     <div class="col text-center mb-5">
-      <img class="rounded img-fluid img-search-list"
-           th:src="${#strings.isEmpty(image)} ? 'assets/img/default/no_image_available.jpg' : ${image}">
+      <th:block th:if="${#strings.isEmpty(image)}">
+        <!-- Render the default image -->
+        <img class="rounded img-fluid img-search-list" th:src="@{/assets/img/default/no_image_available.jpg}" />
+      </th:block>
+      <th:block th:unless="${#strings.isEmpty(image)}">
+        <!-- Render the image from the 'image' variable -->
+        <img class="rounded img-fluid img-search-list" th:src="@{'/' + image}" />
+      </th:block>
     </div>
     <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
       <div>
         <h5 class="fs-3 fw-bold mb-4" th:text="${name}"><!-- name --></h5>
         <p class="text-muted mb-4" th:text="${description}"><!-- description --></p>
         <!-- Add ID to the url and a hyperlink text -->
-        <a class="fw-bold link-primary mb-3" th:href="@{/view/{id}(id=${id})}">[[${textLink}]]
+        <a class="fw-bold link-primary mb-3" th:href="@{/{url}/{id}(url=${url}, id=${id})}">[[${textLink}]]
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-arrow-narrow-right fs-3">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <line x1="5" y1="12" x2="19" y2="12"></line>

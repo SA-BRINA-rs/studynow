@@ -7,4 +7,5 @@ public interface CardData {
     String getCardTextLink();
     int getCardRate();
     String getCardImage();
+    String getURL();
 }

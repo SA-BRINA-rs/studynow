@@ -6,6 +6,8 @@ import com.sabrina.studynow.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -15,8 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder @Data @EqualsAndHashCode(callSuper = false)
-public class Institution extends BaseEntity {
+public class Institution extends BaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id

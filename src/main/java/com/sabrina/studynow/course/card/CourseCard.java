@@ -4,6 +4,7 @@ import com.sabrina.studynow.base.card.CardData;
 import com.sabrina.studynow.course.Course;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @Data @EqualsAndHashCode(callSuper = true)
 public class CourseCard extends Course implements CardData {
 
+    @Transient
     @Getter(AccessLevel.NONE)
     private final int DEFAULT_RATE = 1;
 
@@ -48,5 +50,10 @@ public class CourseCard extends Course implements CardData {
     @Override
     public String getCardImage() {
         return "";
+    }
+
+    @Override
+    public String getURL() {
+        return "view";
     }
 }

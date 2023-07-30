@@ -1,62 +1,147 @@
 package com.sabrina.studynow.course;
 
-import com.sabrina.studynow.token.APITokenService;
+import com.sabrina.studynow.course.favorite.Favorite;
+import com.sabrina.studynow.course.favorite.FavoriteNullObject;
+import com.sabrina.studynow.course.favorite.FavoriteService;
+import com.sabrina.studynow.course.rate.Rate;
+import com.sabrina.studynow.course.rate.RateNullObject;
+import com.sabrina.studynow.course.rate.RateService;
+import com.sabrina.studynow.user.User;
+import com.sabrina.studynow.user.UserNullObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import java.util.*;
 
-@RestController
-@RequestMapping(path = "/api/v1/course")
+@Controller
+@RequestMapping(path = "view")
 public class CourseController {
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     private final CourseService courseService;
-    private final APITokenService apiTokenService;
+    private final FavoriteService favoriteService;
+    private final RateService rateService;
 
     @Autowired
-    public CourseController(CourseService courseService, APITokenService apiTokenService) {
+    public CourseController(
+            CourseService courseService,
+            FavoriteService favoriteService,
+            RateService rateService) {
         this.courseService = courseService;
-        this.apiTokenService = apiTokenService;
+        this.favoriteService = favoriteService;
+        this.rateService = rateService;
     }
 
-    @GetMapping
-    public ResponseEntity<String> checkAPI() {
-        return ResponseEntity.ok("Course API is working");
+    @GetMapping("{id}")
+    String getCourse(
+            Model model,
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal User user) {
+
+        SecurityContextHolder.getContext().getAuthentication();
+        User userTemp = Optional.ofNullable(user)
+                .orElse(new UserNullObject());
+
+        Course course = courseService.getById(id);
+        Integer averageRate = Optional.ofNullable(rateService.getAverageRateByCourseId(id))
+                .orElse(1);
+        course.setAverageRate(averageRate);
+
+        List<Rate> rates = Optional.of(rateService.getALlRatesByCourseId(id))
+                .orElse(Collections.emptyList());
+        Rate userRate = Optional.ofNullable(rateService.getRateByUserId(userTemp.getId(), id))
+                .orElse(new RateNullObject());
+        Favorite favorite = Optional.ofNullable(favoriteService.getFavoriteByUserId(userTemp.getId(), id))
+                .orElse(new FavoriteNullObject());
+
+        model.addAttribute("course", course);
+        model.addAttribute("rates", rates);
+        model.addAttribute("userRate", userRate);
+        model.addAttribute("favorite", favorite);
+        model.addAttribute("user", userTemp);
+        model.addAttribute("pageName", "course");
+
+        return "view";
     }
 
-    @PostMapping
-    public ResponseEntity<String>
-    addCourse(@RequestHeader("token") String token, @RequestBody Course course) {
+    @PostMapping("/favorites")
+    String addFavorite(
+            Model model,
+            @RequestBody Long id,
+            @AuthenticationPrincipal User user) {
 
-        if (Objects.isNull(apiTokenService.getById(token)))
-            return ResponseEntity.badRequest().body("Token is invalid");
+        SecurityContextHolder.getContext().getAuthentication();
 
-        if (apiTokenService.getById(token).isExpired())
-            return ResponseEntity.badRequest().body("Token is expired");
+        Course course = courseService.getById(id);
+        Favorite favorite = Optional.ofNullable(favoriteService.getFavoriteByUserId(user.getId(), id))
+                .orElse(Favorite.builder()
+                        .user(user)
+                        .course(course)
+                        .build());
+        favoriteService.save(favorite);
 
-        courseService.save(course);
-
-        return ResponseEntity.ok("Course added");
+        return "redirect:/view/" + id;
     }
 
-    @ExceptionHandler
-    public ResponseEntity<String> handleException(MissingRequestHeaderException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+    @DeleteMapping("/favorites/{id}")
+    String deleteFavorite(
+            Model model,
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal User user) {
+
+        SecurityContextHolder.getContext().getAuthentication();
+        Favorite favorite = favoriteService.getFavoriteByUserId(user.getId(), id);
+        if (Objects.nonNull(favorite)){
+            favoriteService.delete(favorite.getId());
+        }
+
+        return "redirect:/view/" + id;
     }
 
-    @ExceptionHandler
-    public ResponseEntity<String> integrityViolationException(DataIntegrityViolationException e) {
-        String message = e.getMessage();
-        if(message.contains("Duplicate entry"))
-            return ResponseEntity.badRequest().body("Duplicate entry exception: Course already exists");
-        return ResponseEntity.badRequest().body(message);
+    @PostMapping("/rate")
+    ResponseEntity<?> addRate(
+            Model model,
+            @ModelAttribute Rate rate,
+            @AuthenticationPrincipal User user) {
+
+        SecurityContextHolder.getContext().getAuthentication();
+
+        Course course = courseService.getById(rate.getCourse().getId());
+        rate.setUser(user);
+        rate.setCourse(course);
+        rateService.save(rate);
+
+        String redirectUrl = "/view/" + rate.getCourse().getId();
+        Map<String, String> response = new HashMap<>();
+        response.put("url", redirectUrl);
+        response.put("message", "Rate added successfully.");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/rate/{id}")
+    ResponseEntity<?> deleteRate(
+            Model model,
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal User user) {
+
+        SecurityContextHolder.getContext().getAuthentication();
+        Rate rate = rateService.getById(id);
+        if (Objects.nonNull(rate)){
+            rateService.delete(rate.getId());
+        }
+
+        String redirectUrl = "/view/" + rate.getCourse().getId();
+        Map<String, String> response = new HashMap<>();
+        response.put("url", redirectUrl);
+        response.put("message", "Rate removed successfully.");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

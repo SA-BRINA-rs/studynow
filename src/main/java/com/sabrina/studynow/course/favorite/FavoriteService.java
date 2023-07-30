@@ -2,6 +2,7 @@ package com.sabrina.studynow.course.favorite;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,10 +20,11 @@ public class FavoriteService {
     	return favoriteRepository.findById(id).orElse(null);
     }
 
-    public void add(Favorite favorite) {
+    public void save(Favorite favorite) {
         favoriteRepository.save(favorite);
     }
 
+    @Transactional
     public void delete(Long id) {
     	favoriteRepository.deleteById(id);
     }
@@ -35,4 +37,12 @@ public class FavoriteService {
     	return favoriteRepository.findAll();
     }
 
+    @Transactional
+    public void deleteAllByCourseId(Long courseId) {
+    	favoriteRepository.deleteAllByCourseId(courseId);
+    }
+
+    public Favorite getFavoriteByUserId(Long userId, Long courseId) {
+        return favoriteRepository.getFavoriteByUserId(userId, courseId);
+    }
 }

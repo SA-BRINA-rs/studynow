@@ -1,8 +1,8 @@
 package com.sabrina.studynow.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,13 +23,10 @@ public class UserController {
     }
 
     @GetMapping
-    public String getSignUp(Model model) {
+    public String getSignUp(Model model, @AuthenticationPrincipal User user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            String username = authentication.getName();
-            model.addAttribute("username", username);
-            model.addAttribute("pageName", "signup");
-        }
+        model.addAttribute("user", user);
+        model.addAttribute("pageName", "signup");
         return "signup";
     }
 

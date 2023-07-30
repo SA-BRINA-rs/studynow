@@ -6,7 +6,7 @@ import lombok.ToString;
 import java.time.LocalDate;
 
 @Getter @ToString
-public class APITokenNullObject extends APIToken {
+public final class APITokenNullObject extends APIToken {
 
     public APITokenNullObject() {
         this.active = false;

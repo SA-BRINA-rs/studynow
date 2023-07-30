@@ -1,5 +1,6 @@
 package com.sabrina.studynow.token;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,8 @@ public class APITokenService {
     	return APITokenRepository.findAll();
     }
 
-    public APIToken getAPIToken(Long id) {
+    public APIToken getAPITokenByUserId(Long id) {
         return APITokenRepository.findByUserId(id).orElse(new APITokenNullObject());
     }
+
 }

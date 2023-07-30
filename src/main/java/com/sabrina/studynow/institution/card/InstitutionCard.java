@@ -48,4 +48,9 @@ public class InstitutionCard extends Institution implements CardData {
     public String getCardImage() {
         return "";
     }
+
+    @Override
+    public String getURL() {
+        return "search/institution";
+    }
 }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="https://www.thymeleaf.org">
+      xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8">
@@ -30,12 +30,12 @@
                         <div class="row">
                             <div class="col col-12 col-md">
                                 <div class="mb-3">
-                                    <input th:value="${user.firstName}" class="form-control" type="text" name="first_name" placeholder="First Name" pattern="^[\p{L}][\p{L}]*$" required="" autocomplete="on" title="Only letters and less than 40 characters" maxlength="40" minlength="1">
+                                    <input th:value="${user.firstName}" class="form-control" type="text" name="firstName" placeholder="First Name" required="" autocomplete="on" title="Only letters and less than 40 characters" maxlength="40" minlength="1">
                                 </div>
                             </div>
                             <div class="col col-12 col-md">
                                 <div class="mb-3">
-                                    <input th:value="${user.lastName}" class="form-control" type="text" name="last_name" placeholder="Last Name" autocomplete="on" required="" pattern="^[\p{L}][\p{L}]*$" title="Only letters and less than 40 characters" maxlength="40" minlength="1">
+                                    <input th:value="${user.lastName}" class="form-control" type="text" name="lastName" placeholder="Last Name" autocomplete="on" required="" title="Only letters and less than 40 characters" maxlength="40" minlength="1">
                                 </div>
                             </div>
                         </div>
@@ -47,11 +47,11 @@
                             </div>
                             <div class="col col-12 col-md">
                                 <div class="mb-3">
-                                    <input th:value="${apiToken.id}" class="form-control" type="text" name="tokenField" placeholder="Token" pattern="" autocomplete="" title="Only letters and less than 40 characters">
+                                    <input th:value="${apiToken.id}" class="form-control" type="text" placeholder="Token" title="Only letters and less than 40 characters" readonly>
                                 </div>
                                 <div class="mb-3">
                                     <div class="form-check form-switch">
-                                        <input th:checked="${apiToken.active} ? 'checked' : ''" type="checkbox" id="flexSwitchCheckDefault" class="form-check-input" >
+                                        <input th:checked="${apiToken.active}" type="checkbox" id="flexSwitchCheckDefault" name="tokenStatus" class="form-check-input" >
                                         <label class="form-label form-check-label" for="flexSwitchCheckDefault">Activate Token</label>
                                     </div>
                                 </div>
@@ -60,19 +60,21 @@
                         <div class="row">
                             <div class="col col-12 col-md">
                                 <div class="mb-3">
-                                    <input class="shadow-sm form-control" type="password" name="password" placeholder="Password" required="" minlength="8" maxlength="128" title="Password must be bigger than 8 and less than 128 characters">
+                                    <input class="shadow-sm form-control" type="password" name="password" placeholder="Password"  minlength="8" maxlength="128" title="Password must be bigger than 8 and less than 128 characters">
                                 </div>
                             </div>
                             <div class="col col-12 col-md">
                                 <div class="mb-3">
-                                    <input class="shadow-sm form-control" type="password" name="passwordRepeat" placeholder="Repeat Password" required="" minlength="8" maxlength="128" title="Password must be bigger than 8 and less than 128 characters">
+                                    <input class="shadow-sm form-control" type="password" name="passwordRepeat" placeholder="Repeat Password" minlength="8" maxlength="128" title="Password must be bigger than 8 and less than 128 characters">
                                 </div>
                             </div>
                         </div>
                         <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}">
                         <div class="row">
                             <div class="col">
-                                <div class="text-end mb-3"><a class="btn btn-primary btn-lg me-2" role="button" href="#">Update</a></div>
+                                <div class="text-end mb-3">
+                                    <button class="btn btn-primary btn-lg me-2" type="submit">Update</button>
+                                </div>
                             </div>
                         </div>
                     </form>

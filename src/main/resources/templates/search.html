@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="https://www.thymeleaf.org">
+      xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title th:text="${#strings.capitalize(pageName)}">StudyNow</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/styles.min.css">
-    <link rel="stylesheet" href="assets/css/Star-Rating.min.css">
-    <link rel="stylesheet" href="assets/css/Static-Star-Rating.min.css">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/Star-Rating.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/Static-Star-Rating.min.css}">
 </head>
 
 <body>
@@ -84,13 +84,13 @@
                 <div th:replace="~{fragments/horizontal_card.html
                         :: cardFields(id=${card.getCardID()}, name=${card.getCardName()},
                         description=${card.getCardDescription()}, textLink=${card.getCardTextLink()},
-                        rate=${card.getCardRate()}, image=${card.getCardImage()})}">
+                        rate=${card.getCardRate()}, image=${card.getCardImage()}, url=${card.getURL()})}">
                 </div>
             </div>
             <hr>
             <div class="row">
                 <div class="col">
-                    <nav>
+                    <nav style="display: none">
                         <ul class="pagination">
                             <li class="page-item"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
                             <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -108,8 +108,8 @@
     <footer th:insert="~{fragments/footer :: footer}"></footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/script.min.js"></script>
-    <script src="assets/js/Star-Rating-star_rating.min.js"></script>
-    <script src="assets/js/dark_theme.js"></script>
+    <script th:src="@{/assets/js/script.min.js}"></script>
+    <script th:src="@{/assets/js/Star-Rating-star_rating.min.js}"></script>
+    <script th:src="@{/assets/js/dark_theme.js}"></script>
 </body>
 </html>

@@ -21,14 +21,13 @@ public class Favorite extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    protected User user;
 
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)
-    private Course course;
-
+    protected Course course;
 }

@@ -83,33 +83,40 @@
                                 <h2 class="accordion-header" role="tab"><button class="accordion-button collapsed shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-2 .item-1" aria-expanded="false" aria-controls="accordion-2 .item-1">Add Mode</button></h2>
                                 <div class="accordion-collapse collapse item-1" role="tabpanel" data-bs-parent="#accordion-2">
                                     <div class="accordion-body">
-                                        <form class="justify-content-center flex-wrap" method="post" action="/institution/mode">
+                                        <form class="justify-content-center flex-wrap" method="post" action="institution/mode">
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="row">
                                                         <div class="col">
-                                                            <div class="mb-3"><input class="form-control" type="text" name="name" placeholder="Name" required="" autocomplete="on" title="Only letters and less than 40 characters" maxlength="40" minlength="1"></div>
+                                                            <div class="mb-3">
+                                                                <input id="modeName" class="form-control" type="text" name="name" placeholder="Name" required="" autocomplete="on" title="Only letters and less than 40 characters" maxlength="40" minlength="1">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col">
-                                                            <div class="mb-3"><textarea class="form-control" placeholder="Description" name="description"></textarea></div>
+                                                            <div class="mb-3">
+                                                                <textarea id="modeDescription" class="form-control" placeholder="Description" name="description"></textarea>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col">
-                                                            <div class="mb-3"><input class="form-control" type="hidden" name="modeId"></div>
+                                                            <div class="mb-3">
+                                                                <input id="modeId" class="form-control" type="hidden" name="id">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <input name="institution" type="hidden" th:value="${institution.id}">
+                                            <input id="institutionId" name="institution" type="hidden" th:value="${institution.id}">
                                             <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}">
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="text-end mb-3">
-                                                        <button class="btn btn-primary btn-lg bg-secondary me-2" type="reset" id="clear-course">Clear</button>
-                                                        <button class="btn btn-primary btn-lg" type="submit" id="add-course">Add</button>
+                                                        <button class="btn btn-primary btn-lg bg-secondary me-2" type="reset" id="clear-mode">Clear</button>
+                                                        <button class="btn btn-primary btn-lg me-2" onclick="updateMode()" id="update-mode">Update</button>
+                                                        <button class="btn btn-primary btn-lg" id="add-mode" type="submit">Add</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -133,9 +140,15 @@
                                                             <td>
                                                                 <button class="link-light bg-danger btn btn-sm me-3 delete-course"
                                                                         th:attr="data-url=@{/institution/mode/{id}(id=${mode.id})}"
-                                                                        onclick="deleteRequest(this);">Delete<i class="fa fa-trash ms-2"></i></button>
-                                                                <a class="link-light bg-primary btn btn-sm edit-course" th:href="@{/institution/mode/{id}(id=${mode.id})}"
-                                                                   role="button" onclick="editRequest(this);">Edit<i class="fa fa-edit ms-2"></i></a>
+                                                                        onclick="deleteRequest(this, 'tr');">Delete<i class="fa fa-trash ms-2"></i></button>
+                                                                <button class="link-light bg-primary btn btn-sm edit-course"
+                                                                        th:data-id="${mode.id}"
+                                                                        th:data-name="${mode.name}"
+                                                                        th:data-description="${mode.description}"
+                                                                        th:data-institutionId="${mode.institution.id}"
+                                                                        onclick="editMode(this)">
+                                                                    Edit<i class="fa fa-edit ms-2"></i>
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                         </tbody>
@@ -170,21 +183,21 @@
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="mb-3">
-                                                                <input class="form-control" type="text" name="name" placeholder="Name" required="" autocomplete="on" title="Only letters and less than 40 characters" maxlength="40" minlength="1">
+                                                                <input id="courseName" class="form-control" type="text" name="name" placeholder="Name" required="" autocomplete="on" title="Only letters and less than 40 characters" maxlength="40" minlength="1">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="mb-3">
-                                                                <textarea class="form-control" placeholder="Subject" name="subject"></textarea>
+                                                                <textarea id="courseSubject" class="form-control" placeholder="Subject" name="subject"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="mb-3">
-                                                                <textarea class="form-control" placeholder="Description" name="description"></textarea>
+                                                                <textarea id="courseDescription" class="form-control" placeholder="Description" name="description"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -193,12 +206,12 @@
                                                             <div class="row">
                                                                 <div class="col">
                                                                     <div class="mb-3"><label class="form-label">Start</label>
-                                                                        <input class="form-control" type="date" name="startDate">
+                                                                        <input id="courseStartDate" class="form-control" type="date" name="startDate">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col">
                                                                     <div class="mb-3"><label class="form-label">End</label>
-                                                                        <input class="form-control" type="date" name="endDate">
+                                                                        <input id="courseEndDate" class="form-control" type="date" name="endDate">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -207,13 +220,13 @@
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="mb-3">
-                                                                <input class="form-control" type="number" placeholder="Price" name="price" min="0">
+                                                                <input id="coursePrice" class="form-control" type="number" placeholder="Price" name="price" min="0">
                                                             </div>
                                                         </div>
                                                         <div class="col">
                                                             <div class="mb-3">
                                                                 <!-- Mode -->
-                                                                <select class="form-select" name="mode">
+                                                                <select id="courseModeOption" class="form-select" name="mode">
                                                                     <optgroup label="Mode">
                                                                         <option th:each="mode: ${modes}" th:text="${mode.name}" th:value="${mode.id}">Online</option>
                                                                     </optgroup>
@@ -224,19 +237,21 @@
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="mb-3">
-                                                                <input class="form-control" type="text" name="tags" placeholder="tag 1, tag 2, tag 3..." autocomplete="on" title="Must enter a valid format" required="" minlength="4">
+                                                                <input id="courseTags" class="form-control" type="text" name="tags" placeholder="tag 1, tag 2, tag 3..." autocomplete="on" title="Must enter a valid format" required="" minlength="4">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <input name="institution" type="hidden" th:value="${institution.id}">
+                                            <input id="courseId" class="form-control" type="hidden" name="id">
                                             <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}">
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="text-end mb-3">
                                                         <button class="btn btn-primary btn-lg bg-secondary me-2" type="reset" id="clear-course-1" >Clear</button>
-                                                        <button class="btn btn-primary btn-lg" type="submit" id="add-course-1">Add</button>
+                                                        <button class="btn btn-primary btn-lg me-2" onclick="updateCourse()" id="update-course">Update</button>
+                                                        <button class="btn btn-primary btn-lg" type="submit" id="add-course">Add</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -262,8 +277,23 @@
                                                                 <td th:text="${course.price}" class="text-truncate">Cell 3</td>
                                                                 <td th:text="${course.startDate}" class="text-truncate">Cell 4</td>
                                                                 <td>
-                                                                    <a class="link-light bg-danger btn btn-sm me-3 delete-course" th:href="${course.id}" role="button">Delete<i class="fa fa-trash ms-2"></i></a>
-                                                                    <a class="link-light bg-primary btn btn-sm edit-course" th:href="${course.id}" role="button">Edit<i class="fa fa-edit ms-2"></i></a>
+                                                                    <button class="link-light bg-danger btn btn-sm me-3 delete-course"
+                                                                            th:attr="data-url=@{/institution/course/{id}(id=${course.id})}"
+                                                                            onclick="deleteRequest(this, 'tr');">Delete<i class="fa fa-trash ms-2"></i></button>
+                                                                    <button class="link-light bg-primary btn btn-sm edit-course"
+                                                                            th:data-id="${course.id}"
+                                                                            th:data-name="${course.name}"
+                                                                            th:data-subject="${course.subject}"
+                                                                            th:data-description="${course.description}"
+                                                                            th:data-startDate="${course.startDate}"
+                                                                            th:data-endDate="${course.endDate}"
+                                                                            th:data-price="${course.price}"
+                                                                            th:data-tags="${course.tags}"
+                                                                            th:data-modeid="${course.mode.id}"
+                                                                            th:data-institutionId="${course.institution.id}"
+                                                                            onclick="editCourse(this)">
+                                                                        Edit<i class="fa fa-edit ms-2"></i>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                         </tbody>

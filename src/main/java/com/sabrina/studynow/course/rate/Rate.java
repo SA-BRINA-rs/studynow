@@ -6,28 +6,32 @@ import com.sabrina.studynow.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Entity
 @Table(name = "rates")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder @Data @EqualsAndHashCode(callSuper = false)
-public class Rate extends BaseEntity {
+public class Rate extends BaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    protected User user;
 
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)
-    private Course course;
+    protected Course course;
 
-    private @Column(nullable = false) int rate = 1;
-    private @Column(nullable = false) String comment;
+    protected @Column(nullable = false) int rate;
+    protected @Column(nullable = false) String comment;
 
 }

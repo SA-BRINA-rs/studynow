@@ -1,7 +1,9 @@
 package com.sabrina.studynow.course;
 
+import com.sabrina.studynow.course.card.CourseCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +40,18 @@ public class CourseService {
                 .orElse(Collections.emptyList());
     }
 
-    public Course getCourseWithAverageRateById(Long courseId) {
-    	return courseRepository.findCourseWithAverageRateById(courseId);
+    public List<Course> getAllByModeId(Long modeId) {
+    	return Optional.of(courseRepository.findAllByModeId(modeId))
+                .orElse(Collections.emptyList());
     }
+
+    @Transactional
+    public void deleteAllByModeId(Long modeId) {
+    	courseRepository.deleteAllByModeId(modeId);
+    }
+
+    public List<CourseCard> getAllCardsByInstitutionId(long l) {
+        return courseRepository.findAllCardsByInstitutionId(l);
+    }
+
 }

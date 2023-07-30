@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter @ToString
-public class InstitutionNullObject extends Institution {
+public final class InstitutionNullObject extends Institution {
 
     public InstitutionNullObject() {
         super();
