@@ -116,10 +116,11 @@
 	<build>
 		<finalName>${war.finalName}</finalName>
 		<plugins>
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.3.2</version>
+				<version>3.4.0</version>
 				<configuration>
 					<warSourceDirectory>${project.build.directory}/${project.build.finalName}</warSourceDirectory>
 					<outputDirectory>${war.outputDirectory}</outputDirectory>
