@@ -116,6 +116,12 @@
 	<build>
 		<finalName>${war.finalName}</finalName>
 		<plugins>
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.9.0</version>
+			</plugin>
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
