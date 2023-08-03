@@ -23,4 +23,11 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
 
     @Query("SELECT c FROM InstitutionCard c")
     List<InstitutionCard> findAllCards();
+
+    @Query("SELECT c FROM InstitutionCard c WHERE " +
+            "(CASE WHEN :#{#institution.name} IS NULL THEN FALSE ELSE LOWER(c.name) LIKE LOWER(concat('%', :#{#institution.name}, '%')) END) OR " +
+            "(CASE WHEN :#{#institution.phone} IS NULL THEN FALSE ELSE LOWER(c.phone) LIKE LOWER(concat('%', :#{#institution.phone}, '%')) END) OR " +
+            "(CASE WHEN :#{#institution.description} IS NULL THEN FALSE ELSE LOWER(c.description) LIKE LOWER(concat('%', :#{#institution.description}, '%')) END) OR " +
+            "(CASE WHEN :#{#institution.tags} IS NULL THEN FALSE ELSE LOWER(c.tags) LIKE LOWER(concat('%', :#{#institution.tags}, '%')) END)")
+    List<InstitutionCard> searchByInstitutionCardsKeyword(Institution institution);
 }

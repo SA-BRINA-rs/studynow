@@ -29,11 +29,11 @@
         <div class="container py-5">
             <div class="row mx-auto">
                 <div class="col">
-                    <form class="d-flex justify-content-center flex-wrap" method="post" action="/search/course">
-                        <input th:name="referenceId" type="hidden" th:value="${referenceId}">
+                    <form class="d-flex justify-content-center flex-wrap" method="post" th:action="${actionUrl} ?: ''">
+<!--                        <input th:name="referenceId" type="hidden" th:value="${referenceId}">-->
                         <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}">
                         <div class="row mx-auto w-100">
-                            <div class="col col-12 col-md-10"><input class="form-control" type="search" name="search" placeholder="Institution StudyNow..."></div>
+                            <div class="col col-12 col-md-10"><input class="form-control" type="search" name="search" th:placeholder="${'Type a(n) ' + pageName + '...'}"></div>
                             <div class="col col-12 col-md-2"><button class="btn btn-primary w-100 mt-2 mt-md-0" type="submit">Search</button></div>
                         </div>
                         <div class="row w-100">
@@ -50,7 +50,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <th:block th:if="${referenceId} > 0 ">
+                                    <th:block th:if="${isFilter != null AND isFilter}">
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" role="tab"><button class="accordion-button collapsed shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-2 .item-2" aria-expanded="false" aria-controls="accordion-2 .item-2">Filter by price</button></h2>
                                             <div class="accordion-collapse collapse item-2" role="tabpanel" data-bs-parent="#accordion-2">
@@ -96,11 +96,13 @@
                 </div>
             </div>
             <!-- Traverse a list of elements -->
-            <div th:each="card: ${cards}">
-                <div th:replace="~{fragments/horizontal_card.html
+            <div th:if="cards != null">
+                <div th:each="card: ${cards}">
+                    <div th:replace="~{fragments/horizontal_card.html
                         :: cardFields(id=${card.getCardID()}, name=${card.getCardName()},
                         description=${card.getCardDescription()}, textLink=${card.getCardTextLink()},
                         rate=${card.getCardRate()}, image=${card.getCardImage()}, url=${card.getURL()})}">
+                    </div>
                 </div>
             </div>
             <hr>

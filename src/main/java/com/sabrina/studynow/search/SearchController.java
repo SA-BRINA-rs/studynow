@@ -1,16 +1,16 @@
 package com.sabrina.studynow.search;
 
 import com.sabrina.studynow.base.Range;
-import com.sabrina.studynow.base.card.RangeNullObject;
+import com.sabrina.studynow.base.card.CardData;
+import com.sabrina.studynow.base.card.CourseCardService;
+import com.sabrina.studynow.base.card.InstitutionCardService;
 import com.sabrina.studynow.course.Course;
 import com.sabrina.studynow.course.CourseService;
-import com.sabrina.studynow.course.card.CourseCard;
+import com.sabrina.studynow.course.filter.CourseSearch;
 import com.sabrina.studynow.course.mode.ModeNullObject;
-import com.sabrina.studynow.course.rate.RateService;
 import com.sabrina.studynow.institution.Institution;
-import com.sabrina.studynow.institution.InstitutionService;
-import com.sabrina.studynow.institution.card.InstitutionCard;
 import com.sabrina.studynow.user.User;
+import com.sabrina.studynow.util.SanitizerUtil;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,59 +18,100 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "search")
 public class SearchController {
 
-    private final InstitutionService institutionService;
     private final CourseService courseService;
-    private final RateService rateService;
+    private final CourseCardService courseCardService;
+    private final InstitutionCardService institutionCardService;
 
     @Autowired
     public SearchController(
-            InstitutionService institutionService,
             CourseService courseService,
-            RateService rateService) {
-        this.institutionService = institutionService;
+            CourseCardService courseCardService,
+            InstitutionCardService institutionCardService) {
         this.courseService = courseService;
-        this.rateService = rateService;
+        this.courseCardService = courseCardService;
+        this.institutionCardService = institutionCardService;
     }
 
-
-    @GetMapping(path = "")
-    String searchInstitutions(Model model, @AuthenticationPrincipal User user) {
-
-        List<InstitutionCard> cards = getInstitutionCardsWithRate();
-        System.out.println(cards.size() + " cards");
-        model.addAttribute("user", user);
-        model.addAttribute("pageName", "institution");
-        model.addAttribute("cards", cards);
-        model.addAttribute("referenceId", -1);
-        model.addAttribute("range", new RangeNullObject());
-        return "search";
+    @GetMapping
+    String searchCards(Model model, @AuthenticationPrincipal User user) {
+        return "redirect:/search/course";
     }
 
-    @GetMapping(path = "institution/{id}")
-    String searchCourses(
-            Model model,
-            @PathVariable("id") Long id,
-            @AuthenticationPrincipal User user) {
+    @GetMapping(path = {"/{cardName}", "/{cardName}/{id}"})
+    String searchCardsByName(Model model, HttpSession session,
+                             @AuthenticationPrincipal User user,
+                             @PathVariable("cardName") String cardName,
+                             @PathVariable(value = "id", required = false) Long id) {
 
-        List<CourseCard> cards = getCourseCardsWithRateByInstitutionId(id);
+        List<? extends CardData> cards = fetchCards(cardName, id, session);
+
         getRange(model);
-
-        System.out.println(cards.size() + " cards");
+        ifNotCourseNoFilter(model, cardName);
         model.addAttribute("user", user);
-        model.addAttribute("pageName", "institution");
+        model.addAttribute("pageName", cardName);
         model.addAttribute("cards", cards);
-        model.addAttribute("referenceId", id);
         return "search";
+    }
+
+    @PostMapping(path = {"/", "/{cardName}", "/{cardName}/{id}"})
+    String searchByKeywordCourses(Model model, HttpSession session,
+              @AuthenticationPrincipal User user,
+              @RequestParam(value="search", required = false, defaultValue = "null") String search,
+              @RequestParam(value="price_range", required = false, defaultValue = "null") String priceRange,
+              @RequestParam(value="startDate", required = false, defaultValue = "null") String startDate,
+              @RequestParam(value="endDate", required = false, defaultValue = "null") String endDate,
+              @RequestParam(value="applyRange", required = false, defaultValue = "null") String applyRange,
+              @PathVariable(value = "cardName", required = false) String cardName,
+              @PathVariable(value = "id", required = false) Long id) {
+
+        double priceMin = -1d;
+        double priceMax = -1d;
+        if (SanitizerUtil.parseBoolean(applyRange)) {
+            priceMin = SanitizerUtil.parseBoolean(applyRange) ? SanitizerUtil.parsePrice(priceRange) : -1;
+            priceMax = courseService.getMaxPriceByAmongAllInstitutions();
+        }
+
+        if(cardName != null && cardName.equals("course")) {
+
+            Long institutionId = (id != null) ? id : -1;
+            Institution institution = Institution.builder().id(institutionId).build();
+
+            Course course = Course.builder()
+                    .id(-1L)
+                    .institution(institution)
+                    .mode(new ModeNullObject())
+                    .name(SanitizerUtil.parseString(search))
+                    .subject(SanitizerUtil.parseString(search))
+                    .description(SanitizerUtil.parseString(search))
+                    .price(priceMin)
+                    .startDate(SanitizerUtil.parseDate(startDate))
+                    .endDate(SanitizerUtil.parseDate(endDate))
+                    .build();
+
+            CourseSearch courseSearch = CourseSearch.builder()
+                    .course(course).maxPrice(priceMax).build();
+            session.setAttribute("courseSearch", courseSearch);
+
+        } else if(cardName != null && cardName.equals("institution")) {
+
+            Institution institution = Institution.builder()
+                    .id(-1L)
+                    .name(SanitizerUtil.parseString(search))
+                    .description(SanitizerUtil.parseString(search))
+                    .phone(SanitizerUtil.parseString(search))
+                    .build();
+
+            session.setAttribute("institutionSearch", institution);
+
+        }
+
+        return "redirect:/search/" + cardName;
     }
 
     private void getRange(Model model){
@@ -78,131 +119,34 @@ public class SearchController {
         double maxPrice = courseService.getMaxPriceByAmongAllInstitutions();
         double value = Math.round(maxPrice / 2);
 
-        Range range = Range.builder()
-                .min(minPrice)
-                .max(maxPrice)
-                .step(10.00)
-                .value(value)
-                .build();
+        Range range = Range.builder().min(minPrice).max(maxPrice)
+                .step(10.00).value(value).build();
         model.addAttribute("range", range);
     }
 
-    @PostMapping(path = "/course")
-    String searchByKeywordCourses(
-            Model model,
-            @RequestParam(value="referenceId", required = false, defaultValue = "-1") String referenceId,
-            @RequestParam(value="search", required = false, defaultValue = "null") String search,
-            @RequestParam(value="price_range", required = false, defaultValue = "null") String priceRange,
-            @RequestParam(value="startDate", required = false, defaultValue = "null") String startDate,
-            @RequestParam(value="endDate", required = false, defaultValue = "null") String endDate,
-            @RequestParam(value="applyRange", required = false, defaultValue = "null") String applyRange,
-            @AuthenticationPrincipal User user,
-            HttpSession session) {
+    private void ifNotCourseNoFilter(Model model, String cardName){
+        model.addAttribute("isFilter", cardName.equals("course"));
+        model.addAttribute("actionUrl","/search/" + cardName);
+    }
 
-        Long institutionId = parseReferenceId(referenceId);
-        Institution institution = Institution.builder()
-                .id(institutionId)
-                .build();
+    private List<? extends CardData> fetchCards(String cardName, Long id, HttpSession session) {
 
-        double priceMin = -1.00;
-        double priceMax = -1.00;
-        if (parseBoolean(applyRange)) {
-            priceMin = parseBoolean(applyRange) ? parsePrice(priceRange) : -1;
-            priceMax = courseService.getMaxPriceByAmongAllInstitutions();
+        List<? extends CardData> cards;
+        CourseSearch courseSearch = (CourseSearch) session.getAttribute("courseSearch");
+        session.removeAttribute("courseSearch");
+
+        Institution institution = (Institution) session.getAttribute("institutionSearch");
+        session.removeAttribute("institutionSearch");
+
+        if (courseSearch != null){
+            return ServiceSearchFactory.getAllCardsByKeyWords(courseSearch);
+        } else if (institution != null){
+            return ServiceSearchFactory.getAllCardsByKeyWords(institution);
+        } else if(id != null){
+            cards = ServiceSearchFactory.getCardsWithRateByOwner(cardName, id);
+        } else {
+            cards = ServiceSearchFactory.getCardsWithRate(cardName);
         }
-
-        Course course = Course.builder()
-                .id(-1L)
-                .institution(institution)
-                .mode(new ModeNullObject())
-                .name(parseString(search))
-                .subject(parseString(search))
-                .description(parseString(search))
-                .price(priceMin)
-                .startDate(parseDate(startDate))
-                .endDate(parseDate(endDate))
-                .build();
-
-        List<CourseCard> cards = courseService.getAllCardsByKeyword(course, priceMax);
-        cards.forEach(card -> {
-            Integer averageRate = Optional.ofNullable(rateService.getAverageRateByCourseId(card.getId()))
-                    .orElse(1);
-            card.setAverageRate(averageRate);
-        });
-
-        session.setAttribute("cards", cards);
-
-        System.out.println(cards.size() + " cards");
-        model.addAttribute("cards", cards);
-        return "redirect:/search/course/filter";
-    }
-
-    @GetMapping(path = "/course/filter")
-    String filterCourses(
-            Model model,
-            @AuthenticationPrincipal User user,
-            HttpSession session) {
-
-        List<CourseCard> cards = (List<CourseCard>) session.getAttribute("cards");
-        if (Objects.isNull(cards)) {
-            return "redirect:/search";
-        }
-
-        getRange(model);
-        System.out.println(cards.size() + " cards");
-        model.addAttribute("cards", cards);
-        model.addAttribute("user", user);
-        model.addAttribute("pageName", "course Filter");
-        session.removeAttribute("cards");
-        return "search";
-    }
-
-    private Boolean parseBoolean(String bool) {
-        if (bool != null && !bool.equalsIgnoreCase("null")){
-            return bool.equalsIgnoreCase("true") || bool.equalsIgnoreCase("on");
-        }
-        return false;
-    }
-
-    private String parseString(String string) {
-        return string != null && !string.equalsIgnoreCase("null") ? string : null;
-    }
-
-    private LocalDate parseDate(String date) {
-        return date != null && !date.equalsIgnoreCase("null") ? LocalDate.parse(date) : null;
-    }
-
-    private Double parsePrice(String price) {
-        return price != null && !price.equalsIgnoreCase("null") ? Double.parseDouble(price) : -1.00;
-    }
-
-    private Long parseReferenceId(String referenceId) {
-        return referenceId != null && !referenceId.equalsIgnoreCase("-1") ? Integer.parseInt(referenceId) : -1L;
-    }
-
-
-    private List<InstitutionCard> getInstitutionCardsWithRate() {
-        List<InstitutionCard> instCards = Optional.ofNullable(institutionService.getAllCards())
-                .orElse(Collections.emptyList());
-
-        instCards.forEach(card -> {
-            Integer averageRate = Optional.ofNullable(rateService.getAverageRateByInstitutionId(card.getId()))
-                    .orElse(1);
-            card.setAverageRate(averageRate);
-        });
-        return instCards;
-    }
-
-    private List<CourseCard> getCourseCardsWithRateByInstitutionId(Long id) {
-        List<CourseCard> cards = Optional.ofNullable(courseService.getAllCardsByInstitutionId(id))
-                .orElse(Collections.emptyList());
-
-        cards.forEach(card -> {
-            Integer averageRate = Optional.ofNullable(rateService.getAverageRateByCourseId(card.getId()))
-                    .orElse(1);
-            card.setAverageRate(averageRate);
-        });
         return cards;
     }
-
 }

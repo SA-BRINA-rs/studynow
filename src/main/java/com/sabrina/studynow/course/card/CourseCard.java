@@ -22,8 +22,8 @@ public class CourseCard extends Course implements CardData {
     private final int DEFAULT_RATE = 1;
 
     @Override
-    public String getCardID() {
-        return Long.toString(id);
+    public Long getCardID() {
+        return id;
     }
 
     @Override
@@ -45,6 +45,11 @@ public class CourseCard extends Course implements CardData {
     public int getCardRate() {
         return Optional.ofNullable(averageRate)
                 .orElse(DEFAULT_RATE);
+    }
+
+    @Override
+    public void setAvgCardRate(int rate) {
+        averageRate = rate;
     }
 
     @Override

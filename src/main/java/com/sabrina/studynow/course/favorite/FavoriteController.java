@@ -61,7 +61,7 @@ public class FavoriteController {
         model.addAttribute("referenceId", -1);
         model.addAttribute("cards", cards);
         model.addAttribute("user", user);
-        model.addAttribute("pageName", "favorite");
+        model.addAttribute("pageName", "Favourite");
         return "search";
     }
 

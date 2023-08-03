@@ -19,8 +19,8 @@ public class InstitutionCard extends Institution implements CardData {
     private final int DEFAULT_RATE = 1;
 
     @Override
-    public String getCardID() {
-        return Long.toString(id);
+    public Long getCardID() {
+        return id;
     }
 
     @Override
@@ -45,12 +45,17 @@ public class InstitutionCard extends Institution implements CardData {
     }
 
     @Override
+    public void setAvgCardRate(int rate) {
+        averageRate = rate;
+    }
+
+    @Override
     public String getCardImage() {
         return "";
     }
 
     @Override
     public String getURL() {
-        return "search/institution";
+        return "search/course";
     }
 }

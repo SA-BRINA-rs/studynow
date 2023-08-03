@@ -33,10 +33,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/logout*"))
                 .authenticationProvider(daoAuthenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-//                        .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
+                        .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
                         .requestMatchers("/", "index", "/api/**", "/signup/**", "/login", "/logout*",
-                                "/view/{id}", "/view/course/", "view/institution/", "/search/**",
-                                "/search/course/**", "/resources/**", "/assets/**").permitAll()
+                                "/view/{id}", "/view/course/", "view/institution/",
+                                "/search/**",
+                                "/resources/**", "/assets/**").permitAll()
                         .requestMatchers("/profile", "/favorite/**", "/institution/**",
                                 "/view/rate/**", "/view/favorite/**")
                         .fullyAuthenticated()

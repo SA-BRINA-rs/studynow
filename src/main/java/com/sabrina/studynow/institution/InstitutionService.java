@@ -1,5 +1,6 @@
 package com.sabrina.studynow.institution;
 
+import com.sabrina.studynow.course.card.CourseCard;
 import com.sabrina.studynow.institution.card.InstitutionCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,4 +47,7 @@ public class InstitutionService {
     	return institutionRepository.findAllCards();
     }
 
+    public List<InstitutionCard> getAllCardsByKeyword(Institution institution) {
+return institutionRepository.searchByInstitutionCardsKeyword(institution);
+    }
 }
