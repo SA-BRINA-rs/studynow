@@ -22,8 +22,4 @@ public class SanitizerUtil {
     public static Double parsePrice(String price) {
         return price != null && !price.equalsIgnoreCase("null") ? Double.parseDouble(price) : -1.00;
     }
-
-    public static Long parseReferenceId(String referenceId) {
-        return referenceId != null && !referenceId.equalsIgnoreCase("-1") ? Integer.parseInt(referenceId) : -1L;
-    }
 }

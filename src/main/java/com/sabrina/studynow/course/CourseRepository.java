@@ -13,16 +13,6 @@ import java.util.Optional;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    @Query("SELECT c FROM Course c WHERE " +
-            "(:#{#course.name} IS NOT NULL OR LOWER(c.name) LIKE LOWER(concat('%', :#{#course.name}, '%'))) OR " +
-            "(:#{#course.subject} IS NOT NULL OR LOWER(c.subject) LIKE LOWER(concat('%', :#{#course.subject}, '%'))) OR " +
-            "(:#{#course.description} IS NOT NULL OR LOWER(c.description) LIKE LOWER(concat('%', :#{#course.description}, '%'))) OR " +
-//            "(LOWER(c.tags) LIKE concat('%', :#{#course.tags}, '%')) OR " +
-            "(c.price BETWEEN :#{#price} AND :maxPrice) OR " +
-            "(:#{#startDate} IS NOT NULL OR c.startDate >= :#{#course.startDate}) AND" +
-            "(:#{#endDate} IS NOT NULL OR c.endDate <= :#{#course.endDate})")
-    List<Course> searchByKeyword(Course course, Double maxPrice);
-
     @Query("SELECT c FROM CourseCard c WHERE " +
             "(CASE WHEN :#{#course.name} IS NULL THEN FALSE ELSE LOWER(c.name) LIKE LOWER(concat('%', :#{#course.name}, '%')) END) OR " +
             "(CASE WHEN :#{#course.subject} IS NULL THEN FALSE ELSE LOWER(c.subject) LIKE LOWER(concat('%', :#{#course.subject}, '%')) END) OR " +
@@ -31,6 +21,17 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "(CASE WHEN :#{#course.startDate} IS NULL THEN FALSE ELSE c.startDate >= :#{#course.startDate} END) AND " +
             "(CASE WHEN :#{#course.endDate} IS NULL THEN FALSE ELSE c.endDate <= :#{#course.endDate} END)")
     List<CourseCard> searchByCourseCardsKeyword(Course course, Double maxPrice);
+
+    @Query("SELECT c FROM CourseCard c " +
+            "JOIN Favorite f ON c.id = f.course.id " +
+            "WHERE (f.user.id = :userId) AND " +
+            "(CASE WHEN :#{#course.name} IS NULL THEN FALSE ELSE LOWER(c.name) LIKE LOWER(concat('%', :#{#course.name}, '%')) END) OR " +
+            "(CASE WHEN :#{#course.subject} IS NULL THEN FALSE ELSE LOWER(c.subject) LIKE LOWER(concat('%', :#{#course.subject}, '%')) END) OR " +
+            "(CASE WHEN :#{#course.description} IS NULL THEN FALSE ELSE LOWER(c.description) LIKE LOWER(concat('%', :#{#course.description}, '%')) END) OR " +
+            "(CASE WHEN :#{#course.price} IS NULL OR :maxPrice IS NULL THEN FALSE ELSE c.price BETWEEN :#{#course.price} AND :maxPrice END) OR " +
+            "(CASE WHEN :#{#course.startDate} IS NULL THEN FALSE ELSE c.startDate >= :#{#course.startDate} END) AND " +
+            "(CASE WHEN :#{#course.endDate} IS NULL THEN FALSE ELSE c.endDate <= :#{#course.endDate} END)")
+    List<CourseCard> findAllCourseCardsByKeywordAndUserId(Course course, double maxPrice, Long userId);
 
     @Query("SELECT c FROM CourseCard c")
     List<CourseCard> findAllCards();
@@ -55,4 +56,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "JOIN Favorite f ON cc.id = f.course.id " +
             "WHERE f.user.id = :userId")
     List<CourseCard> findAllCourseCardsByUserId(Long userId);
+
 }

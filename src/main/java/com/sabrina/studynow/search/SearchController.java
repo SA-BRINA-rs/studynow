@@ -25,8 +25,6 @@ import java.util.List;
 public class SearchController {
 
     private final CourseService courseService;
-    private final CourseCardService courseCardService;
-    private final InstitutionCardService institutionCardService;
 
     @Autowired
     public SearchController(
@@ -34,8 +32,6 @@ public class SearchController {
             CourseCardService courseCardService,
             InstitutionCardService institutionCardService) {
         this.courseService = courseService;
-        this.courseCardService = courseCardService;
-        this.institutionCardService = institutionCardService;
     }
 
     @GetMapping
@@ -49,7 +45,7 @@ public class SearchController {
                              @PathVariable("cardName") String cardName,
                              @PathVariable(value = "id", required = false) Long id) {
 
-        List<? extends CardData> cards = fetchCards(cardName, id, session);
+        List<? extends CardData> cards = fetchCards(user, cardName, id, session);
 
         getRange(model);
         ifNotCourseNoFilter(model, cardName);
@@ -77,7 +73,7 @@ public class SearchController {
             priceMax = courseService.getMaxPriceByAmongAllInstitutions();
         }
 
-        if(cardName != null && cardName.equals("course")) {
+        if(cardName != null && (cardName.equals("course") || cardName.equals("favorite"))) {
 
             Long institutionId = (id != null) ? id : -1;
             Institution institution = Institution.builder().id(institutionId).build();
@@ -125,11 +121,15 @@ public class SearchController {
     }
 
     private void ifNotCourseNoFilter(Model model, String cardName){
-        model.addAttribute("isFilter", cardName.equals("course"));
+        if (cardName.equals("course") || cardName.equals("favorite")) {
+            model.addAttribute("isFilter", true);
+        } else {
+            model.addAttribute("isFilter", false);
+        }
         model.addAttribute("actionUrl","/search/" + cardName);
     }
 
-    private List<? extends CardData> fetchCards(String cardName, Long id, HttpSession session) {
+    private List<? extends CardData> fetchCards(User user, String cardName, Long id, HttpSession session) {
 
         List<? extends CardData> cards;
         CourseSearch courseSearch = (CourseSearch) session.getAttribute("courseSearch");
@@ -139,14 +139,16 @@ public class SearchController {
         session.removeAttribute("institutionSearch");
 
         if (courseSearch != null){
+            if (cardName.equals("favorite")) {
+                return ServiceSearchFactory.getAllCourseCardsByKeywordAndUserId(courseSearch, user.getId());
+            }
             return ServiceSearchFactory.getAllCardsByKeyWords(courseSearch);
         } else if (institution != null){
             return ServiceSearchFactory.getAllCardsByKeyWords(institution);
         } else if(id != null){
-            cards = ServiceSearchFactory.getCardsWithRateByOwner(cardName, id);
+            return ServiceSearchFactory.getCardsWithRateByOwner(cardName, id);
         } else {
-            cards = ServiceSearchFactory.getCardsWithRate(cardName);
+           return ServiceSearchFactory.getCardsWithRate(cardName, user);
         }
-        return cards;
     }
 }

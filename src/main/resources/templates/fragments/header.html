@@ -21,7 +21,7 @@
             <li th:if="${#strings.trim(#authentication.principal.userRole) == 'INSTITUTION'}" class="nav-item">
               <a class="nav-link" th:href="@{/institution}">Institution</a>
             </li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/favorite}">Favourite</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/search/favorite}">Favourite</a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/profile}">Profile</a></li>
         </th:block>
         <li class="nav-item d-flex" style="padding-left: 10px;">

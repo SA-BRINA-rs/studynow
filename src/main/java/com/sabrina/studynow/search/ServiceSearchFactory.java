@@ -6,10 +6,10 @@ import com.sabrina.studynow.base.card.CourseCardService;
 import com.sabrina.studynow.base.card.InstitutionCardService;
 import com.sabrina.studynow.course.Course;
 import com.sabrina.studynow.course.CourseService;
-import com.sabrina.studynow.course.card.CourseCard;
 import com.sabrina.studynow.course.filter.CourseSearch;
 import com.sabrina.studynow.institution.Institution;
 import com.sabrina.studynow.institution.InstitutionService;
+import com.sabrina.studynow.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,12 +52,34 @@ public class ServiceSearchFactory {
         return getAverageRates(institutionCardService, cards);
     }
 
+    public static List<? extends CardData>
+    getAllCourseCardsByKeywordAndUserId(CourseSearch courseSearch, Long userId) {
+        Course course = courseSearch.getCourse();
+        double maxPrice = courseSearch.getMaxPrice();
+        List<? extends CardData> cards = Optional.ofNullable(courseService
+                        .getAllCourseCardsByKeywordAndUserId(course, maxPrice, userId))
+                .orElse(Collections.emptyList());
+        return getAverageRates(courseCardService, cards);
+    }
+
+    public static List<? extends CardData> getAllCourseCardsByUserId(User user) {
+        List<? extends CardData> cards = Optional.of(courseService.findAllCourseCardsByUserId(user.getId()))
+                .orElse(Collections.emptyList());
+        return getAverageRates(courseCardService, cards);
+    }
+
     public static List<? extends CardData> getCardsWithRate(String cardName) {
+        return getCardsWithRate(cardName, null);
+    }
+
+    public static List<? extends CardData> getCardsWithRate(String cardName, User user) {
         List<? extends CardData> cards = new ArrayList<>();
         if(cardName.equals("course")){
             cards = getAllCardsWithRate(courseCardService);
         } else if(cardName.equals("institution")){
             cards = getAllCardsWithRate(institutionCardService);
+        } else if(cardName.equals("favorite")){
+            cards = getAllCourseCardsByUserId(user);
         }
         return cards;
     }
@@ -72,19 +94,19 @@ public class ServiceSearchFactory {
         return cards;
     }
 
-    private static List<? extends CardData> getCourseCardsWithRateByOwnerId(CardService cardService, Long id) {
+    public static List<? extends CardData> getCourseCardsWithRateByOwnerId(CardService cardService, Long id) {
         List<? extends CardData> cards = Optional.ofNullable(cardService.getAllByOwnerId(id))
                 .orElse(Collections.emptyList());
         return getAverageRates(cardService, cards);
     }
 
-    private static List<? extends CardData> getAllCardsWithRate(CardService cardService) {
+    public static List<? extends CardData> getAllCardsWithRate(CardService cardService) {
         List<? extends CardData> cards = Optional.ofNullable(cardService.getAll())
                 .orElse(Collections.emptyList());
         return getAverageRates(cardService, cards);
     }
 
-    private static List<? extends CardData> getAverageRates(CardService cardService, List<? extends CardData> cards) {
+    public static List<? extends CardData> getAverageRates(CardService cardService, List<? extends CardData> cards) {
         cards.forEach(card -> {
             Integer averageRate = Optional.ofNullable(cardService.getAverageRateById(card.getCardID()))
                     .orElse(1);

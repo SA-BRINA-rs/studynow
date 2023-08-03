@@ -1,6 +1,5 @@
 package com.sabrina.studynow.course;
 
-import com.sabrina.studynow.base.card.CardData;
 import com.sabrina.studynow.course.card.CourseCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,5 +72,9 @@ public class CourseService {
 
     public List<CourseCard> getAllCards() {
         return courseRepository.findAllCards();
+    }
+
+    public List<CourseCard> getAllCourseCardsByKeywordAndUserId(Course course, double maxPrice, Long id) {
+        return courseRepository.findAllCourseCardsByKeywordAndUserId(course, maxPrice, id);
     }
 }
