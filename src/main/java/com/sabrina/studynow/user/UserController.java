@@ -30,16 +30,9 @@ public class UserController {
         return "signup";
     }
 
-    @PostMapping(params = "userType")
-    public ModelAndView postSignUp(
-            Model model,
-            @ModelAttribute User user,
-            @RequestParam("passwordRepeat") String passwordConfirm,
-            @RequestParam("userType") String userType) {
-
-        if(Objects.nonNull(userType) && userType.equalsIgnoreCase(UserRole.INSTITUTION.toString())) {
-            user.setUserRole(UserRole.INSTITUTION);
-        }
+    @PostMapping
+    public ModelAndView postSignUp(Model model, @ModelAttribute User user,
+            @RequestParam("passwordRepeat") String passwordConfirm) {
 
         userService.add(user);
         return new ModelAndView("redirect:/login", model.asMap());
