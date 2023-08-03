@@ -64,9 +64,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" th:if="${#strings.trim(#authentication.principal.userRole) == 'INSTITUTION'}">
                             <div class="col col-12 col-md">
-                                <div th:if="${#strings.trim(#authentication.principal.userRole) == 'INSTITUTION'}" class="mb-3">
+                                <div class="mb-3">
                                     <label class="form-label">User ID</label>
                                     <input th:value="${user.id}" class="shadow-sm form-control" type="text" placeholder="User ID" disabled>
                                 </div>
