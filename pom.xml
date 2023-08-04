@@ -132,6 +132,21 @@
 					<target>17</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>libs/</classpathPrefix>
+							<mainClass>
+								com.sabrina.studynow.StudyNowApplication
+							</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
