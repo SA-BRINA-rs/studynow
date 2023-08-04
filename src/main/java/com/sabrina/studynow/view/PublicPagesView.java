@@ -30,13 +30,4 @@ public class PublicPagesView {
         return "login";
     }
 
-    private void addAttributes(Model model, String pageName) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            String username = authentication.getName();
-            model.addAttribute("username", username);
-        }
-        model.addAttribute("pageName", pageName);
-    }
-
 }

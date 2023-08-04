@@ -89,6 +89,25 @@ public class Commands {
                     .build();
             userService.add(nationalCollegeIreland);
 
+            User cct = User.builder()
+                    .id(3L)
+                    .firstName("CCT College Dublin")
+                    .lastName("CCT College Dublin")
+                    .email("cct.collegedublin@email.com")
+                    .userRole(UserRole.INSTITUTION)
+                    .password("12345678")
+                    .build();
+            userService.add(cct);
+
+            User peter = User.builder()
+                    .id(4L)
+                    .firstName("Peter")
+                    .lastName("Parker")
+                    .email("peter@email.com")
+                    .password("12345678")
+                    .build();
+            userService.add(peter);
+
             Address address = Address.builder()
                     .user(nationalCollegeIreland)
                     .address1("23 Upper Pembroke Street")
@@ -108,7 +127,7 @@ public class Commands {
                     .build();
             apiTokenRepository.save(apiToken);
 
-            Institution institution = Institution.builder()
+            Institution nationalCollegeInstitution = Institution.builder()
                     .id(1L)
                     .user(nationalCollegeIreland)
                     .name("National College of Ireland")
@@ -118,18 +137,36 @@ public class Commands {
                             "in areas related to commerce, industry, and management.")
                     .tags(Arrays.asList("College", "University", "Education"))
                     .build();
-            institutionRepository.save(institution);
+            institutionRepository.save(nationalCollegeInstitution);
 
-            Mode mode = Mode.builder()
-                    .institution(institution)
+            Mode onlineMode = Mode.builder()
+                    .institution(nationalCollegeInstitution)
                     .name("Online")
                     .description("Online courses")
                     .build();
-            modeRepository.save(mode);
+            modeRepository.save(onlineMode);
+
+            Institution cctInstitution = Institution.builder()
+                    .id(2L)
+                    .user(cct)
+                    .name("CCT College Dublin")
+                    .phone("353 1 633 3222")
+                    .description("CCT College Dublin is an Irish Higher Education Institution " +
+                            "specialising in Computing and Business courses.")
+                    .tags(Arrays.asList("College", "University", "Education"))
+                    .build();
+            institutionRepository.save(cctInstitution);
+
+            Mode partTimeModeCCT = Mode.builder()
+                    .institution(cctInstitution)
+                    .name("Online")
+                    .description("Online courses")
+                    .build();
+            modeRepository.save(partTimeModeCCT);
 
             Course course1 = Course.builder()
                     .id(1L)
-                    .institution(institution)
+                    .institution(nationalCollegeInstitution)
                     .name("BSc (Honours) in Computing")
                     .price(15000.00)
                     .startDate(LocalDate.now().plusYears(2))
@@ -140,14 +177,14 @@ public class Commands {
                             "up-to-date coverage of computing and IT topics. " +
                             "It is designed to equip students with the knowledge and skills " +
                             "to develop innovative solutions which the modern business environment demands.")
-                    .mode(mode)
+                    .mode(onlineMode)
                     .tags(Arrays.asList("Computing", "IT", "Technology"))
                     .build();
             courseRepository.save(course1);
 
             Course course2 = Course.builder()
                     .id(2L)
-                    .institution(institution)
+                    .institution(nationalCollegeInstitution)
                     .name("MSc in Cloud Computing")
                     .price(10000.00)
                     .startDate(LocalDate.now())
@@ -157,10 +194,27 @@ public class Commands {
                             "aiming to produce graduates with a good understanding of cloud computing " +
                             "and a solid foundation in the skills and techniques required to manage " +
                             "cloud computing platforms and services.")
-                    .mode(mode)
+                    .mode(onlineMode)
                     .tags(Arrays.asList("Computing", "IT", "Technology"))
                     .build();
             courseRepository.save(course2);
+
+            Course cctCourse = Course.builder()
+                    .id(3L)
+                    .institution(cctInstitution)
+                    .name("MSc in Data Analytics")
+                    .price(12000.00)
+                    .startDate(LocalDate.now().plusYears(2))
+                    .endDate(LocalDate.now().plusYears(6))
+                    .subject("IT")
+                    .description("The MSc in Data Analytics is a taught postgraduate programme " +
+                            "aiming to produce graduates with a solid understanding of data analytics " +
+                            "and the specialist skills needed to apply data analytics to solve real-world " +
+                            "business problems.")
+                    .mode(partTimeModeCCT)
+                    .tags(Arrays.asList("Computing", "IT", "Technology"))
+                    .build();
+            courseRepository.save(cctCourse);
 
             Favorite favorite1 = Favorite.builder()
                     .user(sabrina)
@@ -190,14 +244,23 @@ public class Commands {
                     .build();
             rateRepository.save(rate2);
 
+            Rate rate3 = Rate.builder()
+                    .user(peter)
+                    .course(course1)
+                    .rate(4)
+                    .comment("Excellent subject and any student should take it. I have only one complaint, " +
+                            "the classes are too long and I get tired.")
+                    .build();
+            rateRepository.save(rate3);
+
             Course courseTest = Course.builder()
                     .id(3L)
-                    .institution(institution)
+                    .institution(nationalCollegeInstitution)
 //                    .name("BSc (Honours) in Computing")
                     .price(-1.00)
 //                    .startDate(LocalDate.now())
 //                    .endDate(LocalDate.now().plusYears(4))
-                    .mode(mode)
+                    .mode(onlineMode)
 //                    .subject("Computing")
 //                    .description("")
                     .tags(Arrays.asList("IT", "Technology"))

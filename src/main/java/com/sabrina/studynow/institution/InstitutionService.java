@@ -27,8 +27,8 @@ public class InstitutionService {
                 .orElse(new InstitutionNullObject());
     }
 
-    public void save(Institution institution) {
-        institutionRepository.save(institution);
+    public Optional<Institution> save(Institution institution) {
+        return Optional.ofNullable(institutionRepository.save(institution));
     }
 
     public void delete(Long id) {

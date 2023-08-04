@@ -17,8 +17,8 @@ public class ModeService {
         this.modeRepository = modeRepository;
     }
 
-    public Mode getById(Long id) {
-    	return modeRepository.findById(id).orElse(null);
+    public Optional<Mode> getById(Long id) {
+    	return modeRepository.findById(id);
     }
 
     public void save(Mode mode) {
@@ -29,8 +29,8 @@ public class ModeService {
     	modeRepository.deleteById(id);
     }
 
-    public void update(Mode mode) {
-    	modeRepository.save(mode);
+    public Optional<Mode> update(Mode mode) {
+    	return Optional.ofNullable(modeRepository.save(mode));
     }
 
     public List<Mode> getAll() {
@@ -38,4 +38,11 @@ public class ModeService {
                 .orElse(Collections.emptyList());
     }
 
+    public Optional<List<Mode>> getModesByInstitutionId(Long id) {
+        return Optional.ofNullable(modeRepository.findByInstitutionId(id));
+    }
+
+    public Optional<Boolean> existsByNameAndInstitutionId(String modeName, long institutionId) {
+        return Optional.ofNullable(modeRepository.existsByNameAndInstitutionId(modeName, institutionId));
+    }
 }

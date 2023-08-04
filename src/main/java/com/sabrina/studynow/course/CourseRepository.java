@@ -57,4 +57,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "WHERE f.user.id = :userId")
     List<CourseCard> findAllCourseCardsByUserId(Long userId);
 
+    @Query("SELECT c FROM Course c WHERE c.institution.id = ?1")
+    List<Course> findAllByInstitutionId(Long id);
+
+    @Query("SELECT c FROM Course c WHERE c.name = ?1 AND c.institution.id = ?2")
+    Boolean existsByNameAndInstitutionId(String courseName, Long institutionId);
 }

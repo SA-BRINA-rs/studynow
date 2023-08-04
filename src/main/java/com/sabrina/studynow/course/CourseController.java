@@ -39,17 +39,14 @@ public class CourseController {
     }
 
     @GetMapping("{id}")
-    String getCourse(
-            Model model,
-            @PathVariable("id") Long id,
-            @AuthenticationPrincipal User user,
-            HttpSession session) {
+    String getCourse(Model model, HttpSession session, @PathVariable("id") Long id,
+            @AuthenticationPrincipal User user) {
 
         SecurityContextHolder.getContext().getAuthentication();
         User userTemp = Optional.ofNullable(user)
                 .orElse(new UserNullObject());
 
-        Course course = courseService.getById(id);
+        Course course = courseService.getById(id).get();
         Integer averageRate = Optional.ofNullable(rateService.getAverageRateByCourseId(id))
                 .orElse(1);
         course.setAverageRate(averageRate);
@@ -78,14 +75,13 @@ public class CourseController {
     }
 
     @PostMapping("/favorites")
-    String addFavorite(
-            Model model,
-            @RequestBody String id,
-            @AuthenticationPrincipal User user) {
+    String addFavorite(Model model, @RequestParam("id") String id, @AuthenticationPrincipal User user) {
+
+        if (Objects.isNull(user)) return "redirect:/login";
 
         SecurityContextHolder.getContext().getAuthentication();
         Long courseId = Long.parseLong(id);
-        Course course = courseService.getById(courseId);
+        Course course = courseService.getById(courseId).get();
         Favorite favorite = Optional.ofNullable(favoriteService.getFavoriteByUserId(user.getId(), courseId))
                 .orElse(Favorite.builder()
                         .user(user)
@@ -97,18 +93,21 @@ public class CourseController {
     }
 
     @DeleteMapping("/favorites/{id}")
-    String deleteFavorite(
-            Model model,
-            @PathVariable("id") Long id,
+    ResponseEntity<?> deleteFavorite(Model model, @PathVariable("id") Long id,
             @AuthenticationPrincipal User user) {
+
+        if (Objects.isNull(user)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
         SecurityContextHolder.getContext().getAuthentication();
         Favorite favorite = favoriteService.getFavoriteByUserId(user.getId(), id);
         if (Objects.nonNull(favorite)){
             favoriteService.delete(favorite.getId());
         }
-
-        return "redirect:/view/" + id;
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Favorite removed successfully.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/rate")
@@ -119,7 +118,7 @@ public class CourseController {
 
         SecurityContextHolder.getContext().getAuthentication();
 
-        Course course = courseService.getById(rate.getCourse().getId());
+        Course course = courseService.getById(rate.getCourse().getId()).get();
         rate.setUser(user);
         rate.setCourse(course);
         rateService.save(rate);

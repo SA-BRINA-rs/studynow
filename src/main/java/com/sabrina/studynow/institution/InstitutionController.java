@@ -14,9 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping(path = "institution")
@@ -45,9 +43,13 @@ public class InstitutionController {
     @GetMapping
     String getInstitution(Model model, @AuthenticationPrincipal User user) {
 
+        if (user == null) return "redirect:/login";
+
         Institution institution = institutionService.getByUserId(user.getId());
-        List<Mode> modes = modeService.getAll();
-        List<Course> courses = courseService.getAll();
+        List<Mode> modes = modeService.getModesByInstitutionId(institution.getId())
+                .orElse(Collections.emptyList());
+        List<Course> courses = courseService.getAllCoursesByInstitutionId(institution.getId())
+                .orElse(Collections.emptyList());
 
         model.addAttribute("user", user);
         model.addAttribute("institution", institution);
@@ -59,13 +61,10 @@ public class InstitutionController {
     }
 
     @PostMapping
-    String postInstitution(
-            Model model,
-            @AuthenticationPrincipal User user,
-            Institution institution){
+    String postInstitution(Model model, Institution institution, @AuthenticationPrincipal User user){
 
         institution.setUser(user);
-        institutionService.save(institution);
+        institutionService.save(institution).orElseThrow();
         model.addAttribute("user", user);
         model.addAttribute("institution", institution);
         model.addAttribute("pageName", "institution");
@@ -73,19 +72,24 @@ public class InstitutionController {
     }
 
     @PostMapping("/mode")
-    String createMode(
-            Mode mode,
-            @AuthenticationPrincipal User user){
-
-        mode.setId(null);
-        modeService.save(mode);
+    String createMode(Mode mode, @AuthenticationPrincipal User user){
+        try {
+            Institution institution = institutionService.getByUserId(user.getId());
+            long institutionId = institution.getId();
+            String modeName = mode.getName();
+            modeService.existsByNameAndInstitutionId(modeName, institutionId).ifPresent(aBoolean -> {
+                if (aBoolean) throw new RuntimeException("Mode already exists.");
+            });
+            mode.setId(null);
+            modeService.save(mode);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return "redirect:/institution";
     }
 
     @DeleteMapping("/mode/{id}")
-    ResponseEntity<String> deleteMode(
-            @PathVariable("id") Long id,
-            @AuthenticationPrincipal User user){
+    ResponseEntity<String> deleteMode(@PathVariable("id") Long id, @AuthenticationPrincipal User user){
 
         List<Course> courses = Optional.of(courseService.getAllByModeId(id))
                 .orElse(Collections.emptyList());
@@ -97,45 +101,62 @@ public class InstitutionController {
 
         courseService.deleteAllByModeId(id);
         modeService.delete(id);
-        return ResponseEntity.ok("Favorites deleted successfully.");
+        return ResponseEntity.ok("Mode deleted successfully.");
     }
 
     @PutMapping("/mode/{id}")
-    ResponseEntity<String> putMode(
-            @AuthenticationPrincipal User user,
-            Mode mode){
+    ResponseEntity<?> putMode(@RequestBody Mode mode, @AuthenticationPrincipal User user){
 
-        modeService.update(mode);
-        return ResponseEntity.ok("Favorites deleted successfully.");
+        Map<String, String> response = new HashMap<>();
+        try {
+           modeService.getById(mode.getId())
+                   .orElseThrow(() -> new RuntimeException("Mode not found."));
+            modeService.save(mode);
+        } catch (Exception e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("message", "Mode updated successfully.");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/course")
-    String postCourse(
-            Course course,
-            @AuthenticationPrincipal User user){
-        course.setId(null);
-        courseService.save(course);
+    String postCourse(Course course, @AuthenticationPrincipal User user){
+
+        try {
+            Institution institution = institutionService.getByUserId(user.getId());
+            courseService.existsByNameAndInstitutionId(course.getName(), institution.getId()).ifPresent(aBoolean -> {
+                if (aBoolean) throw new RuntimeException("Course already exists.");
+            });
+            course.setId(null);
+            courseService.save(course);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return "redirect:/institution";
     }
 
     @DeleteMapping("/course/{id}")
-    ResponseEntity<String> deleteCourse(
-            @PathVariable("id") Long id,
-            @AuthenticationPrincipal User user){
+    ResponseEntity<String> deleteCourse(@PathVariable("id") Long id, @AuthenticationPrincipal User user){
 
         favoriteService.deleteAllByCourseId(id);
         rateService.deleteAllByCourseId(id);
         courseService.delete(id);
-        return ResponseEntity.ok("Favorites deleted successfully.");
+        return ResponseEntity.ok("Course deleted successfully.");
     }
 
     @PutMapping("/course")
-    ResponseEntity<String> putCourse(
-            @AuthenticationPrincipal User user,
-            Course course){
+    ResponseEntity<?> putCourse(@RequestBody Course course, @AuthenticationPrincipal User user){
 
-        courseService.update(course);
-        return ResponseEntity.ok("Course updated successfully.");
+        try {
+            courseService.getById(course.getId())
+                    .orElseThrow(() -> new RuntimeException("Course not found."));
+            courseService.update(course);
+        } catch (Exception e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        Map<String, String> response = Map.of("message", "Course updated successfully.");
+        return ResponseEntity.ok(response);
     }
 
 }

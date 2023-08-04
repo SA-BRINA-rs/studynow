@@ -138,6 +138,12 @@ public class SearchController {
         Institution institution = (Institution) session.getAttribute("institutionSearch");
         session.removeAttribute("institutionSearch");
 
+        session.setAttribute("previousPage", "search/" + cardName);
+
+        if (courseSearch == null && cardName.equals("favorite")){
+            return ServiceSearchFactory.getAllCourseCardsByUserId(user);
+        }
+
         if (courseSearch != null){
             if (cardName.equals("favorite")) {
                 return ServiceSearchFactory.getAllCourseCardsByKeywordAndUserId(courseSearch, user.getId());

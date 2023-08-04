@@ -10,8 +10,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "modes")
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @Builder @Data @EqualsAndHashCode(callSuper = false)
 public class Mode extends BaseEntity implements Serializable {
 

@@ -5,23 +5,18 @@ var rateComment = document.getElementById("comment");
 var ratingList = document.getElementById("rating_list");
 
 var addToFavorites = function(id) {
-    var url = "/view/favorites";
-    var data = id;
+    var url = "/view/favorites?id=" + id;
+    var data = 'id=' + id;
     createRequest(url, data);
 }
 
 favoriteButton.addEventListener("click", function (event) {
     var courseId = favoriteButton.getAttribute("data-id");
-    // check if favorite has class active
     if (!favoriteButton.classList.contains("active")) {
-        // remove active class
         favoriteButton.classList.remove("active");
-        // remove from favorites
         deleteRequest(favoriteButton);
     } else {
-        // add active class
         favoriteButton.classList.add("active");
-        // add to favorites
         addToFavorites(courseId);
     }
 });

@@ -19,8 +19,8 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public Course getById(Long id) {
-    	return courseRepository.findById(id).orElse(null);
+    public Optional<Course> getById(Long id) {
+    	return courseRepository.findById(id);
     }
 
     public void save(Course course) {
@@ -76,5 +76,13 @@ public class CourseService {
 
     public List<CourseCard> getAllCourseCardsByKeywordAndUserId(Course course, double maxPrice, Long id) {
         return courseRepository.findAllCourseCardsByKeywordAndUserId(course, maxPrice, id);
+    }
+
+    public Optional<List<Course>> getAllCoursesByInstitutionId(Long id) {
+        return Optional.ofNullable(courseRepository.findAllByInstitutionId(id));
+    }
+
+    public Optional<Boolean> existsByNameAndInstitutionId(String courseName, Long institutionId) {
+        return Optional.ofNullable(courseRepository.existsByNameAndInstitutionId(courseName, institutionId));
     }
 }
