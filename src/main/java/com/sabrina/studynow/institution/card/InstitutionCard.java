@@ -29,8 +29,18 @@ public class InstitutionCard extends Institution implements CardData {
     }
 
     @Override
+    public String getCardSubtitle() {
+        return "";
+    }
+
+    @Override
     public String getCardDescription() {
         return description;
+    }
+
+    @Override
+    public String getCardLabel() {
+        return "";
     }
 
     @Override

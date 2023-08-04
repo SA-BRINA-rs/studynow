@@ -100,7 +100,8 @@
                 <div th:each="card: ${cards}">
                     <div th:replace="~{fragments/horizontal_card.html
                         :: cardFields(id=${card.getCardID()}, name=${card.getCardName()},
-                        description=${card.getCardDescription()}, textLink=${card.getCardTextLink()},
+                        subtitle=${card.getCardSubtitle()}, description=${card.getCardDescription()},
+                        label=${card.getCardLabel()}, textLink=${card.getCardTextLink()},
                         rate=${card.getCardRate()}, image=${card.getCardImage()}, url=${card.getURL()})}">
                     </div>
                 </div>

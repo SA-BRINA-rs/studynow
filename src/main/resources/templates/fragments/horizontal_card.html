@@ -1,4 +1,4 @@
-<div th:fragment="cardFields (id, name, description, textLink, rate, image, url)">
+<div th:fragment="cardFields (id, name, subtitle, description, label, textLink, rate, image, url)">
   <hr>
   <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
     <!-- Add image to the card -->
@@ -15,7 +15,9 @@
     <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
       <div>
         <h5 class="fs-3 fw-bold mb-4" th:text="${name}"><!-- name --></h5>
-        <p class="text-muted mb-4" th:text="${description}"><!-- description --></p>
+        <span th:text="${subtitle} ?: ''" class="fw-bold d-block" style="color: #bababa;font-size: 0.85em;">Subtitle</span>
+        <p class="text-muted mt-2" th:text="${description}"><!-- description --></p>
+        <span th:text="${label} ?: ''" class="d-block mb-2 pe-3" style="font-size: 0.85em;color: #979797;text-align: right;">0</span>
         <!-- Add ID to the url and a hyperlink text -->
         <a class="fw-bold link-primary mb-3" th:href="@{/{url}/{id}(url=${url}, id=${id})}">[[${textLink}]]
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-arrow-narrow-right fs-3">

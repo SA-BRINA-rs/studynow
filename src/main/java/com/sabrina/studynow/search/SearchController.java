@@ -70,7 +70,8 @@ public class SearchController {
         double priceMax = -1d;
         if (SanitizerUtil.parseBoolean(applyRange)) {
             priceMin = SanitizerUtil.parseBoolean(applyRange) ? SanitizerUtil.parsePrice(priceRange) : -1;
-            priceMax = courseService.getMaxPriceByAmongAllInstitutions();
+            priceMax = courseService.getMaxPriceByAmongAllInstitutions()
+                    .orElse(0.0);
         }
 
         if(cardName != null && (cardName.equals("course") || cardName.equals("favorite"))) {
@@ -111,8 +112,10 @@ public class SearchController {
     }
 
     private void getRange(Model model){
-        double minPrice = courseService.getMinPriceAmongAllInstitutionId();
-        double maxPrice = courseService.getMaxPriceByAmongAllInstitutions();
+        double minPrice = courseService.getMinPriceAmongAllInstitutionId()
+                .orElse(0d);
+        double maxPrice = courseService.getMaxPriceByAmongAllInstitutions()
+                .orElse(0d);
         double value = Math.round(maxPrice / 2);
 
         Range range = Range.builder().min(minPrice).max(maxPrice)

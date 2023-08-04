@@ -58,12 +58,12 @@ public class CourseService {
         return courseRepository.searchByCourseCardsKeyword(course, priceRange);
     }
 
-    public double getMaxPriceByAmongAllInstitutions() {
-        return courseRepository.getMaxPriceByAmongAllInstitutions();
+    public Optional<Double> getMaxPriceByAmongAllInstitutions() {
+        return Optional.ofNullable(courseRepository.getMaxPriceByAmongAllInstitutions());
     }
 
-    public double getMinPriceAmongAllInstitutionId() {
-        return courseRepository.getMinPriceAmongAllInstitutionId();
+    public Optional<Double> getMinPriceAmongAllInstitutionId() {
+        return Optional.ofNullable(courseRepository.getMinPriceAmongAllInstitutionId());
     }
 
     public List<CourseCard> findAllCourseCardsByUserId(Long userId) {

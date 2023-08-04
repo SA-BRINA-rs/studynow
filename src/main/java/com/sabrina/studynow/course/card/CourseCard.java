@@ -32,8 +32,19 @@ public class CourseCard extends Course implements CardData {
     }
 
     @Override
+    public String getCardSubtitle() {
+        if(institution == null) return "";
+        return institution.getName();
+    }
+
+    @Override
     public String getCardDescription() {
         return description;
+    }
+
+    @Override
+    public String getCardLabel() {
+        return "€ " + price;
     }
 
     @Override
