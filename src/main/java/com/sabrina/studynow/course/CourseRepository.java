@@ -47,10 +47,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<CourseCard> findAllCardsByInstitutionId(long l);
 
     @Query("SELECT MAX(c.price) FROM Course c")
-    double getMaxPriceByAmongAllInstitutions();
+    Double getMaxPriceByAmongAllInstitutions();
 
     @Query("SELECT MIN(c.price) FROM Course c")
-    double getMinPriceAmongAllInstitutionId();
+    Double getMinPriceAmongAllInstitutionId();
 
     @Query("SELECT cc FROM CourseCard cc " +
             "JOIN Favorite f ON cc.id = f.course.id " +
