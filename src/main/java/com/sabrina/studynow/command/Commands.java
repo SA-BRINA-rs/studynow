@@ -33,6 +33,8 @@ import java.util.Arrays;
 @Configuration
 public class Commands {
 
+    private final boolean DISABLE_TEST_DATA = true;
+
     private final UserService userService;
     private final AddressRepository addressRepository;
     private final APITokenRepository apiTokenRepository;
@@ -69,6 +71,8 @@ public class Commands {
     @Bean
     CommandLineRunner commandLineRunner(){
         return args -> {
+
+            if (DISABLE_TEST_DATA) return;
 
             User sabrina = User.builder()
                     .id(1L)
