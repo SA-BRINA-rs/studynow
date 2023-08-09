@@ -33,7 +33,7 @@ import java.util.Arrays;
 @Configuration
 public class Commands {
 
-    private final boolean DISABLE_TEST_DATA = false;
+    private final boolean DISABLE_TEST_DATA = true;
 
     private final UserService userService;
     private final AddressRepository addressRepository;

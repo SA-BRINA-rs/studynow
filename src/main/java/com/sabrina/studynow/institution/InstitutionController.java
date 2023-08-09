@@ -117,6 +117,7 @@ public class InstitutionController {
             return ResponseEntity.badRequest().body(response);
         }
         response.put("message", "Mode updated successfully.");
+        response.put("url", "/institution");
         return ResponseEntity.ok(response);
     }
 
@@ -148,6 +149,7 @@ public class InstitutionController {
     @PutMapping("/course")
     ResponseEntity<?> putCourse(@RequestBody Course course, @AuthenticationPrincipal User user){
 
+        Map<String, String> response = new HashMap<>();
         try {
             courseService.getById(course.getId())
                     .orElseThrow(() -> new RuntimeException("Course not found."));
@@ -155,7 +157,8 @@ public class InstitutionController {
         } catch (Exception e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        Map<String, String> response = Map.of("message", "Course updated successfully.");
+        response.put("message", "Course updated successfully.");
+        response.put("url", "/institution");
         return ResponseEntity.ok(response);
     }
 

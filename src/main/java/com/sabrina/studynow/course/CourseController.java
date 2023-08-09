@@ -113,12 +113,16 @@ public class CourseController {
     @PostMapping("/rate")
     ResponseEntity<?> addRate(
             Model model,
-            @ModelAttribute Rate rate,
+            @RequestBody Rate rate,
             @AuthenticationPrincipal User user) {
 
-        SecurityContextHolder.getContext().getAuthentication();
+        Course course = courseService.getById(rate.getCourse().getId())
+                .orElse(new CourseNullObject());
+        Rate savedRate = rateService.getRateByUserId(user.getId(), course.getId());
 
-        Course course = courseService.getById(rate.getCourse().getId()).get();
+        if (Objects.nonNull(savedRate)){
+            rate.setId(savedRate.getId());
+        }
         rate.setUser(user);
         rate.setCourse(course);
         rateService.save(rate);

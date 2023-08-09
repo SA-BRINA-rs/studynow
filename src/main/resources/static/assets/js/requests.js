@@ -68,7 +68,7 @@ var createRequest = function (url, data, contentType='application/json',
     $.ajax({
         type: "POST",
         url: url,
-        data: JSON.stringify(data),
+        data: data,
         contentType: contentType,
         beforeSend: function(xhr) {
             xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);

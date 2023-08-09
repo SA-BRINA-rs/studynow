@@ -25,7 +25,7 @@ var postRate = function(btn){
 
     var url = btn.getAttribute('data-url');
     var courseId = btn.getAttribute('data-courseId');
-    var rate = 0;
+    var rateValue = 0;
     // use ratingList to get all li elements. For each li element get the svg element and check if it has the class star-active. And count how many stars are star-active
     console.log(ratingList.querySelectorAll('li').length)
     console.log(ratingList.children)
@@ -33,20 +33,17 @@ var postRate = function(btn){
         if (el.tagName == 'LI') {
             var svg = el.children[0];
             if (svg && svg.classList.contains('star-yellow')) {
-                rate++;
+                rateValue++;
             }
         }
     });
-    rate = rate = 0 ? 1 : rate;
+    rateValue = (rateValue == 0) ? 1 : rateValue;
 
     var data = {
-        "id": "-1",
-        "user.id": "-1",
-        "course.id": courseId,
-        "rate": rate,
-        "comment": rateComment.value
+        course: {id: courseId},
+        rate: rateValue,
+        comment: rateComment.value
     };
 
-    let contentType = 'application/x-www-form-urlencoded';
-    createRequest(url, data, contentType);
+    createRequest(url, data);
 };
